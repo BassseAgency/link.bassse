@@ -4,15 +4,19 @@ import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from './src/components/LanguageSelector';
 import { AuthModal } from './components/AuthModal';
 import { CMSDashboard } from './components/CMSDashboard';
+import { BasseDashboard } from './components/BasseDashboard';
 import { CMSProvider, useCMS } from './src/context/CMSContext';
+import { useDesign } from './src/hooks/useDesign';
+import { Logo } from './src/components/Logo';
 import { ArtistProfile } from './types';
+import { InstagramIcon, FacebookIcon, TwitterIcon, YouTubeIcon, SoundCloudIcon, SpotifyIcon, TikTokIcon, LinkedInIcon } from './src/components/SocialIcons';
 
 // Import new block components
 import { HeroBlock } from './components/blocks/HeroBlock';
 import { BiographyBlock } from './components/blocks/BiographyBlock';
 import { SetsBlock } from './components/blocks/SetsBlock';
 import { PressPhotosBlock } from './components/blocks/PressPhotosBlock';
-import { RiderBlock } from './components/blocks/RiderBlock';
+
 import { BookingBlock } from './components/blocks/BookingBlock';
 import { ArtistInfoBlock } from './components/blocks/ArtistInfoBlock';
 
@@ -28,6 +32,7 @@ const AppContent: React.FC<AppContentProps> = ({ artistData }) => {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showCMSDashboard, setShowCMSDashboard] = useState(false);
   const { session } = useCMS();
+  const { primaryColor, getButtonClasses, getButtonStyle } = useDesign();
 
   const handleCMSAccess = () => {
     if (session) {
@@ -43,6 +48,19 @@ const AppContent: React.FC<AppContentProps> = ({ artistData }) => {
 
   const handleAuthSuccess = () => {
     setShowCMSDashboard(true);
+  };
+
+  // Función para determinar qué dashboard mostrar según el rol
+  const renderDashboard = () => {
+    if (!session) return null;
+    
+    // Si es administrador de BASSSE, mostrar BasseDashboard
+    if (session.user.role === 'bassse_admin') {
+      return <BasseDashboard onClose={() => setShowCMSDashboard(false)} />;
+    }
+    
+    // Para artistas y admins normales, mostrar CMSDashboard
+    return <CMSDashboard onClose={() => setShowCMSDashboard(false)} />;
   };
 
   const handleDownloadAll = async () => {
@@ -64,10 +82,11 @@ const AppContent: React.FC<AppContentProps> = ({ artistData }) => {
           {[...Array(12)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-2 h-2 bg-[#f69f16]/20 rounded-full"
+              className="absolute w-2 h-2 rounded-full"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
+                backgroundColor: `${primaryColor}33`,
               }}
               animate={{
                 y: [-20, -100],
@@ -85,10 +104,11 @@ const AppContent: React.FC<AppContentProps> = ({ artistData }) => {
           {[...Array(8)].map((_, i) => (
             <motion.div
               key={`large-${i}`}
-              className="absolute w-3 h-3 bg-[#f69f16]/10 rounded-full"
+              className="absolute w-3 h-3 rounded-full"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
+                backgroundColor: `${primaryColor}1A`,
               }}
               animate={{
                 x: [-30, 30, -30],
@@ -108,45 +128,89 @@ const AppContent: React.FC<AppContentProps> = ({ artistData }) => {
         {/* Top Navigation */}
         <div className="fixed top-0 left-0 right-0 z-50 p-6">
           <div className="flex justify-between items-center">
-            {/* Language Selector - Top Left */}
+            {/* Logo y controles izquierda */}
             <motion.div
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.5 }}
+              className="flex items-center gap-4"
             >
+              {/* Logo LINK.BASSSE */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+              >
+                <Logo size="small" />
+              </motion.div>
+              
               <LanguageSelector />
+              
+              {/* Development Mode Indicator */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+                className="bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2"
+              >
+                <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                MODO DESARROLLO
+              </motion.div>
             </motion.div>
 
             {/* Top Right Buttons */}
             <motion.div
-              className="flex gap-3"
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="flex items-center gap-3"
             >
+
+              {/* Acceso Dashboard / Inicio Sesión Button */}
               <motion.button
                 onClick={handleCMSAccess}
-                className="bg-gradient-to-r from-[#f69f16] to-[#e6950f] hover:from-[#e6950f] hover:to-[#d6850e] text-black font-bold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 flex items-center gap-2"
+                className={`py-2 px-4 backdrop-blur-sm ${getButtonClasses('primary')}`}
+                style={getButtonStyle('primary')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  {session ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                  )}
                 </svg>
-                Acceso CMS
+                {session ? 'Acceso Dashboard' : 'Inicio Sesión'}
               </motion.button>
 
+              {/* Register Button - Morado */}
+              {!session && (
+                <motion.button
+                  onClick={handleRegister}
+                  className="bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500/40 hover:border-purple-500/60 text-purple-300 hover:text-purple-200 font-medium py-2 px-4 rounded-lg transition-all duration-300 flex items-center gap-2 backdrop-blur-sm"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                  </svg>
+                  Registrarse
+                </motion.button>
+              )}
+
+              {/* Download All Button */}
               <motion.button
-                onClick={handleRegister}
-                className="bg-black/50 hover:bg-[#f69f16] text-[#f69f16] hover:text-black border border-[#f69f16] font-bold py-2 px-4 rounded-lg transition-all duration-300 flex items-center gap-2"
+                onClick={handleDownloadAll}
+                className={`py-2 px-4 backdrop-blur-sm ${getButtonClasses('secondary')}`}
+                style={getButtonStyle('secondary')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Registro
+                Descargar Todo
               </motion.button>
             </motion.div>
           </div>
@@ -155,135 +219,242 @@ const AppContent: React.FC<AppContentProps> = ({ artistData }) => {
         {/* Main Content - All Blocks */}
         <div className="relative z-10">
           {/* Block 1 - Hero Section */}
-          <HeroBlock artistData={artistData} />
+          <HeroBlock />
 
           {/* Block 2 - Biography */}
-          <BiographyBlock artistData={artistData} />
+          <BiographyBlock />
 
           {/* Block 3 - Sets (Releases) */}
-          <SetsBlock artistData={artistData} />
+          <SetsBlock />
 
           {/* Block 4 - Press Photos */}
-          <PressPhotosBlock artistData={artistData} />
+          <PressPhotosBlock />
 
-          {/* Block 5 - Live Performance Rider */}
-          <RiderBlock artistData={artistData} />
+          {/* Block 5 - Booking Info */}
+          <BookingBlock />
 
-          {/* Block 6 - Booking Info */}
-          <BookingBlock artistData={artistData} />
-
-          {/* Block 7 - Artist Info / Press Kit */}
-          <ArtistInfoBlock artistData={artistData} />
+          {/* Block 6 - Artist Info / Press Kit / Technical Rider */}
+          <ArtistInfoBlock />
         </div>
-
-        {/* Download All Button - Bottom Right */}
-        <motion.div
-          className="fixed bottom-6 right-6 z-40"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1.5, duration: 0.5 }}
-        >
-          <motion.button
-            onClick={handleDownloadAll}
-            className="bg-gradient-to-r from-[#f69f16] to-[#e6950f] hover:from-[#e6950f] hover:to-[#d6850e] text-black font-bold py-4 px-6 rounded-full shadow-lg hover:shadow-xl hover:shadow-[#f69f16]/30 transition-all duration-300 flex items-center gap-3"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Descargar Todo
-          </motion.button>
-        </motion.div>
 
         {/* Footer */}
         <motion.footer 
-          className="bg-black py-12 mt-auto border-t border-[#f69f16]/20 relative z-10"
+          className="bg-black py-12 mt-auto relative z-10"
+          style={{ borderTop: `1px solid ${primaryColor}20` }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2, duration: 0.5 }}
         >
           <div className="container mx-auto px-4">
-            {/* Why Choose LINK.BASSSE Section */}
+            {/* Modern Features Section */}
             <motion.div 
-              className="mb-8 text-center"
+              className="mb-12 text-center"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 2.2, duration: 0.5 }}
             >
-              <h3 className="text-2xl font-bold text-[#f69f16] mb-6">
-                🤔 ¿Por qué elegir LINK.BASSSE?
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-                <motion.div 
-                  className="bg-gray-900/50 p-4 rounded-lg border border-[#f69f16]/20 hover:border-[#f69f16]/40 transition-all duration-300"
-                  whileHover={{ scale: 1.02 }}
+              <div className="mb-8">
+                <motion.h3 
+                  className="text-3xl md:text-4xl font-bold mb-4"
+                  style={{ 
+                    background: `linear-gradient(to right, ${primaryColor}, ${primaryColor}CC, ${primaryColor})`,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text'
+                  }}
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 2.3, duration: 0.6 }}
                 >
-                  <div className="text-2xl mb-2">🚀</div>
-                  <p className="text-gray-300 text-sm">
-                    Centraliza la promoción de múltiples artistas en una única herramienta
-                  </p>
-                </motion.div>
-                <motion.div 
-                  className="bg-gray-900/50 p-4 rounded-lg border border-[#f69f16]/20 hover:border-[#f69f16]/40 transition-all duration-300"
-                  whileHover={{ scale: 1.02 }}
-                >
-                  <div className="text-2xl mb-2">🎯</div>
-                  <p className="text-gray-300 text-sm">
-                    Ofrece métricas reales de interés y conversión
-                  </p>
-                </motion.div>
-                <motion.div 
-                  className="bg-gray-900/50 p-4 rounded-lg border border-[#f69f16]/20 hover:border-[#f69f16]/40 transition-all duration-300"
-                  whileHover={{ scale: 1.02 }}
-                >
-                  <div className="text-2xl mb-2">🛠️</div>
-                  <p className="text-gray-300 text-sm">
-                    Permite al artista mantener actualizado su press kit sin depender de terceros
-                  </p>
-                </motion.div>
-                <motion.div 
-                  className="bg-gray-900/50 p-4 rounded-lg border border-[#f69f16]/20 hover:border-[#f69f16]/40 transition-all duration-300"
-                  whileHover={{ scale: 1.02 }}
-                >
-                  <div className="text-2xl mb-2">🌐</div>
-                  <p className="text-gray-300 text-sm">
-                    Internacionalizable y adaptado a la industria actual
-                  </p>
-                </motion.div>
+                  ¿Por qué LINK.BASSSE?
+                </motion.h3>
+                <p className="text-gray-400 text-lg max-w-3xl mx-auto">
+                  La evolución de los press kits musicales está aquí
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+                {[
+                  { icon: '🚀', title: 'Gestión Unificada', desc: 'Centraliza todos tus artistas en una plataforma intuitiva y profesional', delay: 2.4 },
+                  { icon: '📊', title: 'Analytics Pro', desc: 'Insights detallados de engagement, conversiones y audiencia', delay: 2.5 },
+                  { icon: '⚡', title: 'Control Total', desc: 'Actualizaciones instantáneas sin intermediarios ni dependencias', delay: 2.6 },
+                  { icon: '🌍', title: 'Alcance Global', desc: 'Multiidioma y optimizado para la industria internacional', delay: 2.7 }
+                ].map((feature, index) => (
+                  <motion.div 
+                    key={index}
+                    className="group relative bg-gradient-to-br from-gray-900/80 to-gray-800/60 p-8 rounded-2xl transition-all duration-500 backdrop-blur-sm"
+                    style={{ 
+                      border: `1px solid ${primaryColor}20`,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = `${primaryColor}60`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = `${primaryColor}20`;
+                    }}
+                    whileHover={{ scale: 1.05, y: -8 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: feature.delay, duration: 0.6 }}
+                  >
+                    <div 
+                      className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      style={{ background: `linear-gradient(to bottom right, ${primaryColor}05, transparent)` }}
+                    ></div>
+                    <div className="relative z-10">
+                      <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">{feature.icon}</div>
+                      <h4 className="font-bold text-lg mb-3" style={{ color: primaryColor }}>{feature.title}</h4>
+                      <p className="text-gray-300 text-sm leading-relaxed">
+                        {feature.desc}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
             </motion.div>
 
-            {/* Contact and Copyright */}
-            <div className="text-center border-t border-[#f69f16]/20 pt-6">
-              <p className="text-gray-400 mb-2">
-                {t('footer.contact')}: <span className="text-[#f69f16]">contrataciones.ksais@gmail.com</span>
+            {/* Brand Section */}
+            <motion.div 
+              className="text-center pt-12 pb-8"
+              style={{ borderTop: `1px solid ${primaryColor}20` }}
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 2.8, duration: 0.5 }}
+            >
+              <motion.div 
+                className="mb-6"
+                whileHover={{ scale: 1.05 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 2.4, duration: 0.6 }}
+              >
+                <Logo size="medium" className="justify-center" />
+              </motion.div>
+              
+              <p className="text-gray-400 text-base max-w-2xl mx-auto mb-8 leading-relaxed">
+                La nueva generación de press kits digitales. Potencia tu carrera musical con herramientas profesionales 
+                diseñadas para el ecosistema actual de la industria.
               </p>
-              <p className="text-gray-500 text-sm">
-                © 2024 K-SAIS. {t('footer.rights')}
-              </p>
-            </div>
+
+              {/* Redes Sociales */}
+              <motion.div 
+                className="mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2.9, duration: 0.5 }}
+              >
+                <h4 className="text-lg font-semibold mb-4" style={{ color: primaryColor }}>
+                  Síguenos en Redes Sociales
+                </h4>
+                <div className="flex justify-center items-center gap-6 flex-wrap">
+                  {[
+                    { Icon: InstagramIcon, url: 'https://instagram.com/bassse.agency', name: 'Instagram' },
+                    { Icon: FacebookIcon, url: 'https://facebook.com/bassse.agency', name: 'Facebook' },
+                    { Icon: TwitterIcon, url: 'https://twitter.com/bassse_agency', name: 'Twitter' },
+                    { Icon: YouTubeIcon, url: 'https://youtube.com/@bassse.agency', name: 'YouTube' },
+                    { Icon: SoundCloudIcon, url: 'https://soundcloud.com/bassse-agency', name: 'SoundCloud' },
+                    { Icon: SpotifyIcon, url: 'https://open.spotify.com/user/bassse.agency', name: 'Spotify' },
+                    { Icon: TikTokIcon, url: 'https://tiktok.com/@bassse.agency', name: 'TikTok' },
+                    { Icon: LinkedInIcon, url: 'https://linkedin.com/company/bassse-agency', name: 'LinkedIn' }
+                  ].map(({ Icon, url, name }, index) => (
+                    <motion.a
+                      key={name}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group relative p-3 rounded-full transition-all duration-300"
+                      style={{ 
+                        backgroundColor: `${primaryColor}10`,
+                        border: `1px solid ${primaryColor}20`,
+                        color: primaryColor
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = `${primaryColor}20`;
+                        e.currentTarget.style.borderColor = `${primaryColor}40`;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = `${primaryColor}10`;
+                        e.currentTarget.style.borderColor = `${primaryColor}20`;
+                      }}
+                      whileHover={{ scale: 1.1, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 3 + index * 0.1, duration: 0.3 }}
+                      title={name}
+                    >
+                      <Icon 
+                        size={24} 
+                        className="transition-colors duration-300"
+                      />
+                    </motion.a>
+                  ))}
+                </div>
+              </motion.div>
+
+              <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500 mb-8">
+                <motion.a
+                  href="/politica-privacidad"
+                  className="hover:text-white transition-colors cursor-pointer"
+                  style={{ color: primaryColor }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  Política de Privacidad
+                </motion.a>
+                <motion.a
+                  href="/aviso-legal"
+                  className="hover:text-white transition-colors cursor-pointer"
+                  style={{ color: primaryColor }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  Aviso Legal
+                </motion.a>
+                <motion.a
+                  href="/politica-cookies"
+                  className="hover:text-white transition-colors cursor-pointer"
+                  style={{ color: primaryColor }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  Política de Cookies
+                </motion.a>
+              </div>
+
+              <div className="pt-8" style={{ borderTop: `1px solid ${primaryColor}10` }}>
+                <p className="text-gray-400 mb-3">
+                  📧 <span className="cursor-pointer font-medium transition-colors" 
+                           style={{ color: primaryColor }}
+                           onMouseEnter={(e) => {
+                             e.currentTarget.style.opacity = '0.8';
+                           }}
+                           onMouseLeave={(e) => {
+                             e.currentTarget.style.opacity = '1';
+                           }}>link@bassse.com</span>
+                </p>
+                <p className="text-gray-500 text-sm">
+                  © 2024 LINK.BASSSE • Powered by BASSSE
+                </p>
+              </div>
+            </motion.div>
           </div>
         </motion.footer>
       </motion.div>
 
       {/* Modals */}
-      <AuthModal 
-        isOpen={showAuthModal} 
-        onClose={() => setShowAuthModal(false)}
-        onSuccess={handleAuthSuccess}
-      />
-      
-      <AuthModal 
-        isOpen={showRegisterModal} 
-        onClose={() => setShowRegisterModal(false)}
-        onSuccess={handleAuthSuccess}
-        isRegisterMode={true}
-      />
-      
-      {showCMSDashboard && (
-        <CMSDashboard onClose={() => setShowCMSDashboard(false)} />
+      {showAuthModal && (
+        <AuthModal 
+          onClose={() => setShowAuthModal(false)}
+          onAuthSuccess={handleAuthSuccess}
+        />
       )}
+      
+      {showRegisterModal && (
+        <AuthModal 
+          onClose={() => setShowRegisterModal(false)}
+          onAuthSuccess={handleAuthSuccess}
+        />
+      )}
+      
+      {showCMSDashboard && renderDashboard()}
     </>
   );
 };

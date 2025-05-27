@@ -172,9 +172,18 @@ export interface ArtistProfile {
   
   // Configuración
   contactEmail: string;
+  agencyWebsite?: string; // URL de la agencia para booking automático
   languages: {
     primary: string;
     secondary?: string;
+  };
+  
+  // Configuración de diseño
+  design: {
+    primaryColor: string; // Color principal (por defecto #f69f16)
+    secondaryColor: string; // Color secundario (por defecto #e6950f)
+    photosLayout: 'grid' | 'centered'; // Layout de fotos
+    buttonStyle: 'rounded' | 'square' | 'pill'; // Estilo de botones
   };
   
   // Metadata
@@ -256,7 +265,7 @@ export interface ArtistMetrics {
 // Leads/Contactos recopilados
 export interface Lead {
   id: string;
-  artistId: string;
+  artistId?: string;
   artistSlug: string;
   
   // Información del contacto
@@ -267,11 +276,17 @@ export interface Lead {
   message?: string;
   
   // Contexto
-  source: 'contact_form' | 'download' | 'booking_inquiry' | 'newsletter';
-  page: string;
-  userAgent: string;
+  source: 'contact_form' | 'download' | 'booking_inquiry' | 'newsletter' | 'press_kit_download' | 'social_media' | 'referral';
+  page?: string;
+  userAgent?: string;
   ipAddress: string;
   country?: string;
+  
+  // Información del evento (para bookings)
+  eventType?: string;
+  eventDate?: string;
+  budget?: string;
+  priority?: 'low' | 'medium' | 'high';
   
   // Metadata
   createdAt: string;
