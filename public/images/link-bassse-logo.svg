@@ -1,0 +1,16 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cadena/eslabón principal -->
+  <g fill="#D4941E">
+    <!-- Eslabón izquierdo -->
+    <path d="M15 15 C5 15, 5 25, 5 30 C5 35, 5 45, 15 45 L35 45 C40 45, 45 40, 45 35 L45 25 C45 20, 40 15, 35 15 L25 15 C20 15, 15 20, 15 25 C15 30, 20 35, 25 35 L30 35" 
+          stroke="#D4941E" stroke-width="8" fill="none" stroke-linecap="round"/>
+    
+    <!-- Eslabón derecho -->
+    <path d="M35 15 C45 15, 55 15, 65 15 C70 15, 75 20, 75 25 L75 35 C75 40, 70 45, 65 45 L45 45 C40 45, 35 40, 35 35 L35 25 C35 30, 40 35, 45 35 L50 35" 
+          stroke="#D4941E" stroke-width="8" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Texto LINK.BASSSE -->
+  <text x="90" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#D4941E">LINK</text>
+  <text x="90" y="45" font-family="Arial, sans-serif" font-size="14" font-weight="normal" fill="#888">BASSSE</text>
+</svg> 

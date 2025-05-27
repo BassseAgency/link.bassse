@@ -1,0 +1,34 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://link.bassse.com/sitemap.xml
+
+# Permitir acceso a todos los perfiles de artistas
+Allow: /k-sais
+Allow: /luna-bass
+Allow: /dark-pulse
+Allow: /neon-waves
+
+# Permitir acceso a recursos estáticos
+Allow: /images/
+Allow: /documents/
+Allow: /audio/
+Allow: /video/
+
+# Bloquear acceso a archivos de configuración
+Disallow: /.env
+Disallow: /config/
+Disallow: /src/
+Disallow: /node_modules/
+
+# Bloquear acceso a dashboards privados
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /cms
+
+# Permitir acceso a API pública
+Allow: /api/press-kit/
+
+# Crawl-delay para ser respetuosos
+Crawl-delay: 1 

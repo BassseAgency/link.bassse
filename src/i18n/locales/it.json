@@ -1,0 +1,61 @@
+{
+  "nav": {
+    "language": "Lingua",
+    "home": "Home",
+    "about": "Chi siamo",
+    "contact": "Contatto"
+  },
+  "hero": {
+    "title": "Electronic Press Kit",
+    "subtitle": "Kit Stampa Elettronico Professionale"
+  },
+  "sections": {
+    "photos": "FOTO STAMPA",
+    "videos": "VIDEO PROMOZIONALI", 
+    "music": "DJ SET E MIX",
+    "documents": "RIDER E INFORMAZIONI",
+    "booking": "INFORMAZIONI PRENOTAZIONE",
+    "about": "DETTAGLI ARTISTA"
+  },
+  "actions": {
+    "download": "Scarica",
+    "view": "Visualizza",
+    "play": "Riproduci",
+    "contact": "Contatta",
+    "expand": "Espandi",
+    "collapse": "Comprimi"
+  },
+  "content": {
+    "photos_count": "{{count}} foto",
+    "videos_count": "{{count}} video", 
+    "tracks_count": "{{count}} tracce",
+    "documents_count": "{{count}} documenti",
+    "booking_info": "Contattaci per prenotazioni",
+    "key_info": "Informazioni chiave"
+  },
+  "artist": {
+    "nationality": "Nazionalità",
+    "genre": "Generi Principali",
+    "residency": "Residenza",
+    "label": "Etichetta/Collettivo",
+    "bio": "Biografia",
+    "full_bio": "Biografia Completa"
+  },
+  "social": {
+    "follow": "Seguici su",
+    "instagram": "Instagram",
+    "soundcloud": "SoundCloud",
+    "beatport": "Beatport",
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "youtube": "YouTube"
+  },
+  "footer": {
+    "powered_by": "Sviluppato da Ai Bassse Agency"
+  },
+  "meta": {
+    "title": "{{artist}} - Electronic Press Kit",
+    "description": "Kit stampa elettronico professionale per {{artist}}. Foto, video, musica e informazioni prenotazione.",
+    "keywords": "DJ, electronic press kit, musica elettronica, techno, prenotazione"
+  }
+} 

@@ -1,0 +1,61 @@
+{
+  "nav": {
+    "language": "Language",
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Electronic Press Kit",
+    "subtitle": "Professional Electronic Press Kit"
+  },
+  "sections": {
+    "photos": "PRESS PHOTOS",
+    "videos": "PROMO VIDEOS", 
+    "music": "DJ SETS & MIXES",
+    "documents": "RIDERS & INFO",
+    "booking": "BOOKING INFORMATION",
+    "about": "ARTIST DETAILS"
+  },
+  "actions": {
+    "download": "Download",
+    "view": "View",
+    "play": "Play",
+    "contact": "Contact",
+    "expand": "Expand",
+    "collapse": "Collapse"
+  },
+  "content": {
+    "photos_count": "{{count}} photos",
+    "videos_count": "{{count}} videos", 
+    "tracks_count": "{{count}} tracks",
+    "documents_count": "{{count}} documents",
+    "booking_info": "Get in touch for bookings",
+    "key_info": "Key information"
+  },
+  "artist": {
+    "nationality": "Nationality",
+    "genre": "Primary Genres",
+    "residency": "Residency",
+    "label": "Label/Collective",
+    "bio": "Biography",
+    "full_bio": "Full Biography"
+  },
+  "social": {
+    "follow": "Follow us on",
+    "instagram": "Instagram",
+    "soundcloud": "SoundCloud",
+    "beatport": "Beatport",
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "youtube": "YouTube"
+  },
+  "footer": {
+    "powered_by": "Powered by Ai Bassse Agency"
+  },
+  "meta": {
+    "title": "{{artist}} - Electronic Press Kit",
+    "description": "Professional electronic press kit for {{artist}}. Photos, videos, music and booking information.",
+    "keywords": "DJ, electronic press kit, electronic music, techno, booking"
+  }
+} 
