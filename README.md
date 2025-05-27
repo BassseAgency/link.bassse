@@ -1,295 +1,166 @@
-# 🎧 LINK.BASSSE - Plataforma Multi-Artista
+# 🎵 LINK.BASSSE
 
-Una plataforma completa de press kits electrónicos para artistas, con sistema de gestión multi-usuario, métricas avanzadas y dashboard administrativo para BASSSE Agency.
+**Plataforma de gestión de perfiles para artistas del colectivo BASSSE**
+
+LINK.BASSSE es una aplicación web moderna que permite a los artistas del colectivo BASSSE gestionar sus perfiles de manera profesional, con un sistema de administración global y colores dinámicos personalizados.
 
 ## ✨ Características Principales
 
-### 🏢 **Plataforma Multi-Artista**
-- **Subdominios personalizados**: `link.bassse.com/nombre-artista`
-- **Gestión centralizada**: Dashboard de BASSSE Agency
-- **Registro de nuevos artistas**: Sistema de onboarding automático
-- **Escalabilidad**: Soporte para múltiples artistas simultáneamente
+### 🎨 **Diseño Dinámico**
+- Colores personalizados por artista
+- Interfaz responsive y moderna
+- Animaciones suaves y transiciones
 
-### 🔐 **Sistema de Autenticación Completo**
-- **Firebase Authentication**: Login/registro seguro
-- **Roles de usuario**: Artist, Admin, BASSSE Admin
-- **Sesiones persistentes**: Mantiene login entre sesiones
-- **Credenciales K-SAIS**: `contrataciones.ksais@gmail.com` / `KSAIS123`
+### 🔐 **Sistema de Autenticación**
+- Login seguro para artistas y administradores
+- Gestión de sesiones
+- Roles diferenciados (Artista/Admin Global)
 
-### 📊 **Métricas y Analytics Avanzados**
-- **Tracking automático**: Visualizaciones, descargas, fuentes de tráfico
-- **Geolocalización**: Análisis por países
-- **Métricas por tipo**: Press kit, biografía, sets, fotos, documentos
-- **Dashboard en tiempo real**: Estadísticas actualizadas
+### 🎛️ **Dashboards Especializados**
+- **Dashboard de Artista**: Gestión personal del perfil
+- **Dashboard de Administrador**: Control global de todos los artistas
+- **Modo Administrador**: Edición de cualquier perfil desde el admin
 
-### 📧 **Sistema de Leads Completo**
-- **Captura automática**: Formularios de contacto y descargas
-- **Gestión centralizada**: Dashboard para procesar leads
-- **Información detallada**: IP, país, fuente, mensaje
-- **Estados de procesamiento**: Pendiente/Procesado con notas
+### 📱 **Bloques de Contenido Modulares**
+- **Hero**: Imagen principal y información básica
+- **Biografía**: Con funcionalidad "Ver más/Ver menos"
+- **Sets**: Gestión de sets musicales
+- **Booking**: Información de contratación
+- **Redes Sociales**: Enlaces a plataformas
+- **Fotos de Prensa**: Galería descargable
 
-### 🎨 **CMS Personalizable por Artista**
-- **Editor completo**: Todas las secciones editables
-- **Persistencia permanente**: Datos guardados en Firebase
-- **Historial de cambios**: Registro completo de modificaciones
-- **Subida de archivos**: Imágenes, documentos, sets
+## 🚀 Tecnologías
 
-### 🌍 **Multilingüe y PWA**
-- **4 idiomas**: Español, Inglés, Italiano, Alemán
-- **Progressive Web App**: Instalable en dispositivos
-- **Optimizado para redes sociales**: Open Graph, Twitter Cards
-- **Responsive**: Perfecto en móviles y desktop
+- **Frontend**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **Styling**: CSS Modules + Variables CSS
+- **Icons**: Lucide React
+- **Estado**: Context API
 
-## 🏗️ Arquitectura del Sistema
+## 🎭 Artistas Implementados
 
-### 📁 Estructura de URLs
-```
-link.bassse.com/                    # Página principal con lista de artistas
-link.bassse.com/k-sais             # Press kit de K-SAIS
-link.bassse.com/otro-artista       # Press kit de otro artista
-link.bassse.com/bassse-dashboard   # Dashboard administrativo de BASSSE
-```
+### K-SAIS
+- **Géneros**: Electronic, House, Techno
+- **Ciudad**: Madrid
+- **Colores**: Verde neón (#00ff88) y Rosa (#ff0088)
+- **Email**: contrataciones.ksais@gmail.com
 
-### 🗄️ Base de Datos (Firebase Firestore)
-- **users**: Información de usuarios y autenticación
-- **artists**: Perfiles completos de artistas
-- **metrics**: Métricas y analytics por artista
-- **leads**: Contactos y leads recopilados
-- **config**: Configuración global de BASSSE
+### Luna Bass
+- **Géneros**: Bass, Dubstep, Future Bass
+- **Ciudad**: Barcelona
+- **Colores**: Púrpura (#8a2be2) y Rosa (#ff69b4)
+- **Email**: booking@lunabass.com
 
-### 🔧 Servicios Implementados
-- **AuthService**: Gestión de autenticación y usuarios
-- **MetricsService**: Tracking y analytics
-- **CMSContext**: Estado global del CMS
-- **Router**: Sistema de rutas multi-artista
+## 🛠️ Instalación y Uso
 
-## 🚀 Instalación y Configuración
+### Prerrequisitos
+- Node.js 18+ 
+- npm o yarn
 
-### 1. Prerrequisitos
+### Instalación
 ```bash
-Node.js 18+
-npm o yarn
-Cuenta de Firebase
-```
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/link.bassse.git
 
-### 2. Instalación
-```bash
-# Clonar repositorio
-git clone [URL_DEL_REPO]
+# Navegar al directorio
 cd link.bassse
 
 # Instalar dependencias
 npm install
 
-# Configurar Firebase (ver firebase-setup.md)
-cp .env.example .env
-# Editar .env con tus credenciales de Firebase
-```
-
-### 3. Configuración de Firebase
-Ver archivo `firebase-setup.md` para instrucciones detalladas de:
-- Creación del proyecto Firebase
-- Configuración de Authentication
-- Configuración de Firestore
-- Reglas de seguridad
-- Variables de entorno
-
-### 4. Desarrollo
-```bash
-# Servidor de desarrollo
+# Iniciar servidor de desarrollo
 npm run dev
-
-# Build de producción
-npm run build
-
-# Preview del build
-npm run preview
 ```
 
-## 🎯 Funcionalidades por Rol
-
-### 👤 **Artista**
-- ✅ Editar su perfil completo en el CMS
-- ✅ Ver métricas de su press kit
-- ✅ Gestionar contenido multimedia
-- ✅ Descargar leads de contacto
-- ✅ Personalizar información de booking
-
-### 🛡️ **BASSSE Admin**
-- ✅ Dashboard completo con métricas globales
-- ✅ Gestión de todos los artistas
-- ✅ Procesamiento de leads
-- ✅ Configuración de la plataforma
-- ✅ Analytics avanzados
-
-### 👁️ **Visitante Público**
-- ✅ Ver press kits de artistas públicos
-- ✅ Descargar contenido multimedia
-- ✅ Contactar artistas via formularios
-- ✅ Compartir en redes sociales
-
-## 📊 Dashboard de BASSSE Agency
-
-### 📈 Métricas Principales
-- **Total de artistas** registrados
-- **Visualizaciones** globales
-- **Descargas** de contenido
-- **Leads** generados
-
-### 🎵 Gestión de Artistas
-- Lista de todos los artistas
-- Estados: Activo/Inactivo, Público/Privado
-- Métricas individuales
-- Acceso directo a perfiles
-
-### 📧 Gestión de Leads
-- Lista de contactos por artista
-- Filtros por estado y fuente
-- Procesamiento y notas
-- Exportación de datos
-
-### ⚙️ Configuración
-- Configuración de dominio
-- Límites de artistas
-- Configuración de notificaciones
-- Gestión de usuarios
-
-## 🔒 Seguridad y Privacidad
-
-### 🛡️ Autenticación
-- Firebase Authentication con email/password
-- Sesiones seguras con tokens JWT
-- Roles y permisos granulares
-- Protección contra ataques comunes
-
-### 🔐 Datos
-- Reglas de Firestore restrictivas
-- Datos de artistas privados por defecto
-- Encriptación en tránsito y reposo
-- Backup automático
-
-### 📊 Analytics
-- Datos anonimizados para métricas
-- Cumplimiento con GDPR
-- Opt-out disponible
-- Retención limitada de datos
-
-## 🌐 Despliegue
-
-### Firebase Hosting
+### Scripts Disponibles
 ```bash
-# Instalar Firebase CLI
-npm install -g firebase-tools
-
-# Login y configurar
-firebase login
-firebase init hosting
-
-# Build y deploy
-npm run build
-firebase deploy
+npm run dev          # Servidor de desarrollo
+npm run build        # Build de producción
+npm run preview      # Preview del build
+npm run lint         # Linting del código
 ```
 
-### Dominio Personalizado
-1. Configurar `link.bassse.com` en Firebase Console
-2. Actualizar DNS del dominio
-3. Verificar certificado SSL
-4. Configurar redirects si es necesario
+## 🔧 Modo Administrador
 
-## 📱 Optimización para Redes Sociales
+El sistema incluye un **modo administrador** especial que permite:
 
-### 🔗 Link in Bio
-- URL corta y memorable
-- Carga rápida en móviles
-- Optimizado para Instagram Stories
-- Previsualización perfecta
+1. **Acceso Global**: El admin puede editar cualquier perfil de artista
+2. **Indicador Visual**: Barra roja que muestra "🔧 MODO ADMINISTRADOR"
+3. **Navegación Fluida**: Transición entre dashboards sin perder datos
+4. **Salida Segura**: Botón para volver al dashboard principal
 
-### 📲 Metadatos
-- Open Graph para Facebook/Instagram
-- Twitter Cards para Twitter
-- Structured Data para SEO
-- Imágenes optimizadas (1200x630px)
+### Flujo de Uso
+1. Admin accede al `BasseDashboard`
+2. Selecciona "Editar" en cualquier artista
+3. Sistema entra en modo administrador
+4. Se cargan los datos del artista seleccionado
+5. Admin puede editar todos los campos
+6. Botón "Salir Modo Admin" para volver
 
-## 🎵 Artistas Actuales
+## 📁 Estructura del Proyecto
 
-### K-SAIS
-- **URL**: `link.bassse.com/k-sais`
-- **Géneros**: Techno, Hard Groove, Underground
-- **Base**: León, España
-- **Colectivo**: La Mata Fest
-- **Estado**: ✅ Activo y Público
+```
+link.bassse/
+├── components/
+│   ├── blocks/           # Bloques de contenido modulares
+│   ├── AuthModal.tsx     # Modal de autenticación
+│   ├── BasseDashboard.tsx # Dashboard del administrador
+│   ├── CMSDashboard.tsx  # Dashboard del artista
+│   └── ...
+├── src/
+│   ├── context/
+│   │   └── CMSContext.tsx # Contexto global del CMS
+│   └── components/
+├── types.ts              # Definiciones de tipos
+└── App.tsx              # Componente principal
+```
 
-### Próximamente
-- Sistema de invitaciones para nuevos artistas
-- Integración con Spotify/SoundCloud APIs
-- Reproductor de música integrado
-- Galería de fotos mejorada
-
-## 🛠️ Tecnologías Utilizadas
-
-### Frontend
-- **React 19** + TypeScript
-- **Vite** para bundling
-- **Tailwind CSS** para estilos
-- **Framer Motion** para animaciones
-- **React Router** para navegación
-- **React i18next** para multilingüe
-
-### Backend/Servicios
-- **Firebase Authentication** para usuarios
-- **Firestore** para base de datos
-- **Firebase Storage** para archivos
-- **Firebase Hosting** para despliegue
-- **Firebase Analytics** para métricas
-
-### Herramientas
-- **TypeScript** para tipado
-- **ESLint** para linting
-- **Prettier** para formateo
-- **Vite PWA Plugin** para PWA
-
-## 📞 Soporte y Contacto
+## 🎯 Funcionalidades del CMS
 
 ### Para Artistas
-- **Email**: support@bassse.com
-- **Documentación**: Ver archivos de ayuda en el CMS
-- **Soporte técnico**: Disponible 24/7
+- ✅ Editar información personal
+- ✅ Gestionar biografía
+- ✅ Subir fotos de prensa
+- ✅ Configurar redes sociales
+- ✅ Gestionar sets musicales
+- ✅ Personalizar colores del perfil
 
-### Para BASSSE Agency
-- **Dashboard**: `link.bassse.com/bassse-dashboard`
-- **Admin Email**: info@bassse.com
-- **Documentación técnica**: Ver `firebase-setup.md`
+### Para Administradores
+- ✅ Ver todos los artistas del colectivo
+- ✅ Editar cualquier perfil (modo administrador)
+- ✅ Gestión global de contenido
+- ✅ Supervisión de cambios
+
+## 🌐 Deploy
+
+El proyecto está configurado para deploy fácil en:
+- **Vercel** (recomendado)
+- **Netlify**
+- **GitHub Pages**
+
+```bash
+# Build para producción
+npm run build
+
+# El directorio 'dist' contiene los archivos estáticos
+```
+
+## 🤝 Contribución
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -m 'Añadir nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## 🎵 Sobre BASSSE
+
+BASSSE es un colectivo de música electrónica que reúne a artistas de diferentes géneros y estilos, promoviendo la diversidad musical y la innovación en la escena electrónica.
 
 ---
 
-**Desarrollado para BASSSE Agency** - LINK.BASSSE: Plataforma completa de press kits electrónicos con gestión multi-artista, métricas avanzadas y dashboard administrativo.
-
-## 🚀 Próximas Funcionalidades
-
-### 🎯 Roadmap Q1 2024
-- [ ] Integración con APIs de Spotify/SoundCloud
-- [ ] Reproductor de música embebido
-- [ ] Sistema de notificaciones push
-- [ ] Exportación avanzada de métricas
-- [ ] Plantillas personalizables de press kit
-- [ ] Sistema de comentarios y feedback
-- [ ] Integración con calendarios de eventos
-- [ ] Marketplace de servicios para artistas
-
-### 🔮 Futuro
-- [ ] IA para optimización de contenido
-- [ ] Análisis predictivo de tendencias
-- [ ] Integración con plataformas de streaming
-- [ ] Sistema de colaboraciones entre artistas
-- [ ] Monetización y sistema de pagos
-- [ ] App móvil nativa
-- [ ] Integración con redes sociales avanzada
-- [ ] Sistema de recomendaciones
-
----
-
-**¡Lleva la promoción musical al siguiente nivel con LINK.BASSSE! 🎵✨**
+**Desarrollado con ❤️ para el colectivo BASSSE**
