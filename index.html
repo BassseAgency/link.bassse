@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO Meta Tags -->
+    <title>LINK.BASSSE - Plataforma Multi-Artista | Electronic Press Kits</title>
+    <meta name="description" content="LINK.BASSSE - Plataforma completa de press kits electrónicos para artistas. Sistema multi-usuario con métricas avanzadas y dashboard administrativo." />
+    <meta name="keywords" content="LINK.BASSSE, electronic press kit, DJ, techno, house, electronic music, press kit, booking, artistas electrónicos" />
+    <meta name="author" content="BASSSE Agency" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://link.bassse.com/" />
+    <meta property="og:title" content="LINK.BASSSE - Plataforma Multi-Artista | Electronic Press Kits" />
+    <meta property="og:description" content="LINK.BASSSE - Plataforma completa de press kits electrónicos para artistas. Sistema multi-usuario con métricas avanzadas y dashboard administrativo." />
+    <meta property="og:image" content="/images/link-bassse-og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="LINK.BASSSE - Plataforma Multi-Artista" />
+    <meta property="og:site_name" content="LINK.BASSSE" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="it_IT" />
+    <meta property="og:locale:alternate" content="de_DE" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://link.bassse.com/" />
+    <meta name="twitter:title" content="LINK.BASSSE - Plataforma Multi-Artista | Electronic Press Kits" />
+    <meta name="twitter:description" content="LINK.BASSSE - Plataforma completa de press kits electrónicos para artistas." />
+    <meta name="twitter:image" content="/images/link-bassse-og.jpg" />
+    <meta name="twitter:image:alt" content="LINK.BASSSE - Plataforma Multi-Artista" />
+    
+    <!-- Instagram specific (uses Open Graph) -->
+    <meta property="instagram:card" content="summary_large_image" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#f69f16" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="LINK.BASSSE" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- Favicon and Icons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/masked-icon.svg" color="#f69f16" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://link.bassse.com/" />
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://picsum.photos">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #000000;
+      }
+      
+      /* Custom scrollbars */
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #262626;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #f69f16;
+        border-radius: 5px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #e6950f;
+      }
+
+      /* Prose styles */
+      .prose a {
+        color: #a3a3a3;
+      }
+      .prose a:hover {
+        color: #d4d4d4;
+      }
+      
+      /* Loading animation */
+      .loading-spinner {
+        border: 3px solid #262626;
+        border-top: 3px solid #f69f16;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Smooth transitions */
+      * {
+        transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 150ms;
+      }
+    </style>
+    
+    <!-- Import Map for React -->
+    <script type="importmap">
+    {
+      "imports": {
+        "react/": "https://esm.sh/react@^19.1.0/",
+        "react": "https://esm.sh/react@^19.1.0",
+        "react-dom/": "https://esm.sh/react-dom@^19.1.0/"
+      }
+    }
+    </script>
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "LINK.BASSSE",
+      "description": "Plataforma completa de press kits electrónicos para artistas",
+      "url": "https://link.bassse.com/",
+      "publisher": {
+        "@type": "Organization",
+        "name": "BASSSE Agency",
+        "url": "https://link.bassse.com/"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://link.bassse.com/{search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+  </head>
+  <body class="bg-black">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-black flex items-center justify-center z-50">
+      <div class="text-center">
+        <div class="loading-spinner mx-auto mb-4"></div>
+        <p class="text-[#f69f16] text-lg font-semibold">Cargando LINK.BASSSE...</p>
+      </div>
+    </div>
+    
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+    
+    <!-- Hide loading screen when app loads -->
+    <script>
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const loadingScreen = document.getElementById('loading-screen');
+          if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
+            setTimeout(function() {
+              loadingScreen.style.display = 'none';
+            }, 300);
+          }
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>
