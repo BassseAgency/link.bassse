@@ -10,7 +10,6 @@ import {
   SoundCloudIcon, 
   SpotifyIcon, 
   TikTokIcon, 
-  LinkedInIcon, 
   WebsiteIcon 
 } from '../../src/components/SocialIcons';
 
