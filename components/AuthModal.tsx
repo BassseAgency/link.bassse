@@ -7,7 +7,7 @@ interface AuthModalProps {
   onAuthSuccess: () => void;
 }
 
-type AuthMode = 'login' | 'register' | 'forgot-password' | 'verify-email';
+type AuthMode = 'login' | 'register' | 'forgot-password';
 
 export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) => {
   const [activeMode, setActiveMode] = useState<AuthMode>('login');
@@ -15,8 +15,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
     username: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    verificationCode: ''
+    confirmPassword: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -79,10 +78,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
           return;
         }
 
-        // Simular envío de email de verificación
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setSuccess('¡Cuenta creada! Se ha enviado un código de verificación a tu email.');
-        setActiveMode('verify-email');
+        // Registro directo sin verificación de email
+        const success = await register(formData.username, formData.email, formData.password);
+        if (success) {
+          setSuccess('¡Cuenta creada exitosamente! Redirigiendo...');
+          setTimeout(() => {
+            onAuthSuccess();
+            onClose();
+          }, 1500);
+        } else {
+          setError('Error al crear la cuenta. El usuario ya existe.');
+        }
       } 
       
       else if (activeMode === 'forgot-password') {
@@ -99,32 +105,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
           setActiveMode('login');
           setSuccess('');
         }, 3000);
-      } 
-      
-      else if (activeMode === 'verify-email') {
-        if (!formData.verificationCode || formData.verificationCode.length !== 6) {
-          setError('Ingresa el código de verificación de 6 dígitos');
-          setIsLoading(false);
-          return;
-        }
-        
-        // Simular verificación
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        if (formData.verificationCode === '123456') {
-          const success = await register(formData.username, formData.email, formData.password);
-          if (success) {
-            setSuccess('¡Email verificado! Tu cuenta ha sido creada exitosamente.');
-            setTimeout(() => {
-              onAuthSuccess();
-              onClose();
-            }, 2000);
-          } else {
-            setError('Error al crear la cuenta. El usuario ya existe.');
-          }
-        } else {
-          setError('Código de verificación incorrecto. Inténtalo de nuevo.');
-        }
       }
     } catch (error) {
       setError('Error de conexión. Inténtalo de nuevo.');
@@ -141,16 +121,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
       username: '',
       email: '',
       password: '',
-      confirmPassword: '',
-      verificationCode: ''
+      confirmPassword: ''
     });
-  };
-
-  const resendVerificationCode = async () => {
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setSuccess('Código de verificación reenviado a tu email.');
-    setIsLoading(false);
   };
 
   return (
@@ -176,7 +148,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
               {activeMode === 'login' && 'Iniciar Sesión'}
               {activeMode === 'register' && 'Crear Cuenta'}
               {activeMode === 'forgot-password' && 'Recuperar Contraseña'}
-              {activeMode === 'verify-email' && 'Verificar Email'}
             </h2>
             <button
               onClick={onClose}
@@ -420,45 +391,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
               </>
             )}
 
-            {/* VERIFY EMAIL FORM */}
-            {activeMode === 'verify-email' && (
-              <>
-                <div className="text-center mb-4">
-                  <p className="text-gray-400 text-sm">
-                    Hemos enviado un código de verificación de 6 dígitos a{' '}
-                    <span className="text-[#f69f16]">{formData.email}</span>
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Código de Verificación
-                  </label>
-                  <input
-                    type="text"
-                    name="verificationCode"
-                    value={formData.verificationCode}
-                    onChange={handleInputChange}
-                    required
-                    maxLength={6}
-                    className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#f69f16] focus:ring-1 focus:ring-[#f69f16] transition-colors text-center text-2xl tracking-widest"
-                    placeholder="123456"
-                  />
-                </div>
-
-                <div className="text-center">
-                  <button
-                    type="button"
-                    onClick={resendVerificationCode}
-                    disabled={isLoading}
-                    className="text-sm text-[#f69f16] hover:text-[#e6950f] transition-colors disabled:opacity-50"
-                  >
-                    ¿No recibiste el código? Reenviar
-                  </button>
-                </div>
-              </>
-            )}
-
             {/* Submit Button */}
             <button
               type="submit"
@@ -475,7 +407,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
                   {activeMode === 'login' && 'Iniciar Sesión'}
                   {activeMode === 'register' && 'Crear Cuenta'}
                   {activeMode === 'forgot-password' && 'Enviar Enlace'}
-                  {activeMode === 'verify-email' && 'Verificar Código'}
                 </>
               )}
             </button>
