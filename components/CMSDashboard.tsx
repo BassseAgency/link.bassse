@@ -181,14 +181,14 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
           />
         )}
 
-        {/* Sidebar - Optimizado para móvil */}
-        <div className={`w-80 sm:w-72 bg-black border-r border-[#f69f16]/30 flex flex-col transform transition-transform duration-300 z-30 ${
+        {/* Sidebar - Optimizado para móvil con ancho reducido */}
+        <div className={`w-64 sm:w-60 lg:w-80 bg-black border-r border-[#f69f16]/30 flex flex-col transform transition-transform duration-300 z-30 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 lg:relative lg:z-auto lg:w-80 absolute inset-y-0 left-0`}>
+        } lg:translate-x-0 lg:relative lg:z-auto absolute inset-y-0 left-0`}>
           {/* Header */}
-          <div className="p-3 lg:p-6 pt-16 lg:pt-6 border-b border-[#f69f16]/30">
-            <div className="flex items-center justify-between mb-3">
-              <h1 className="text-base lg:text-xl font-bold text-[#f69f16] hidden lg:block">CMS Panel</h1>
+          <div className="p-2 lg:p-6 pt-16 lg:pt-6 border-b border-[#f69f16]/30">
+            <div className="flex items-center justify-between mb-2 lg:mb-3">
+              <h1 className="text-sm lg:text-xl font-bold text-[#f69f16] hidden lg:block">CMS Panel</h1>
               <button
                 onClick={onClose}
                 className="text-gray-400 hover:text-white transition-colors hidden lg:block"
@@ -197,26 +197,26 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
               </button>
             </div>
             <div className="text-xs lg:text-sm text-gray-400">
-              <p className="truncate">Bienvenido, {session.user.displayName}</p>
+              <p className="truncate text-xs lg:text-sm">Bienvenido, {session.user.displayName}</p>
               <p className="text-xs truncate">Editando: {artistData.name}</p>
             </div>
           </div>
 
-          {/* Navigation - Optimizada para móvil */}
-          <nav className="flex-1 p-2 lg:p-4 overflow-y-auto">
+          {/* Navigation - Compacta para móvil */}
+          <nav className="flex-1 p-1 lg:p-4 overflow-y-auto">
             <div className="space-y-1">
               {sections.map((section) => (
                 <button
                   key={section.id}
                   onClick={() => handleSectionChange(section.id as CMSSection)}
-                  className={`w-full flex items-center gap-2 lg:gap-3 p-2 lg:p-3 rounded-lg transition-all duration-150 text-sm lg:text-base ${
+                  className={`w-full flex items-center gap-1 lg:gap-3 p-1.5 lg:p-3 rounded-lg transition-all duration-150 text-xs lg:text-base ${
                     activeSection === section.id
                       ? 'bg-[#f69f16]/20 text-[#f69f16] border border-[#f69f16]/30'
                       : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                   }`}
                 >
-                  <span className="text-base lg:text-lg flex-shrink-0">{section.icon}</span>
-                  <span className="font-medium truncate">{section.name}</span>
+                  <span className="text-sm lg:text-lg flex-shrink-0">{section.icon}</span>
+                  <span className="font-medium truncate text-xs lg:text-sm">{section.name}</span>
                   {activeSection === section.id && (
                     <span className="ml-auto text-xs">●</span>
                   )}
@@ -225,29 +225,29 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
             </div>
           </nav>
 
-          {/* Footer - Optimizado para móvil */}
-          <div className="p-2 lg:p-4 space-y-2 border-t border-[#f69f16]/30">
+          {/* Footer - Compacto para móvil */}
+          <div className="p-1 lg:p-4 space-y-1 lg:space-y-2 border-t border-[#f69f16]/30">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors duration-200 text-xs lg:text-sm"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 lg:py-2 px-2 lg:px-3 rounded-lg transition-colors duration-200 text-xs lg:text-sm"
             >
-              🔗 Ver LINK.BASSSE
+              🔗 Ver LINK
             </button>
             <button
               onClick={handleDownloadAll}
               disabled={isLoading}
-              className="w-full bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-2 px-3 rounded-lg transition-colors duration-200 disabled:opacity-50 text-xs lg:text-sm"
+              className="w-full bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-1.5 lg:py-2 px-2 lg:px-3 rounded-lg transition-colors duration-200 disabled:opacity-50 text-xs lg:text-sm"
             >
-              {isLoading ? 'Generando...' : '📦 Descargar Todo'}
+              {isLoading ? 'Gen...' : '📦 Descargar'}
             </button>
             <button
               onClick={handleLogout}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-3 rounded-lg transition-colors duration-200 text-xs lg:text-sm"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-1.5 lg:py-2 px-2 lg:px-3 rounded-lg transition-colors duration-200 text-xs lg:text-sm"
             >
-              🚪 Cerrar Sesión
+              🚪 Salir
             </button>
-            <div className="text-xs text-gray-500 text-center mt-2">
-              <p>v1.0.0</p>
+            <div className="text-xs text-gray-500 text-center mt-1">
+              <p className="hidden lg:block">v1.0.0</p>
             </div>
           </div>
         </div>
@@ -255,17 +255,17 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
         {/* Main Content - Optimizado para móvil */}
         <div className="flex-1 flex flex-col overflow-hidden pt-14 lg:pt-0">
           {/* Content Header - Optimizado */}
-          <div className="p-3 lg:p-6 bg-black/50 border-b border-[#f69f16]/30">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 lg:gap-4">
+          <div className="p-2 lg:p-6 bg-black/50 border-b border-[#f69f16]/30">
+            <div className="flex flex-col gap-2 lg:gap-4">
               <div className="min-w-0 flex-1">
-                <h2 className="text-lg lg:text-2xl font-bold text-white truncate">
+                <h2 className="text-base lg:text-2xl font-bold text-white truncate">
                   {sections.find(s => s.id === activeSection)?.name}
                 </h2>
-                <p className="text-xs lg:text-sm text-gray-400 lg:hidden">
+                <p className="text-xs text-gray-400 lg:hidden">
                   {artistData.name}
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-1 lg:gap-2">
                 {/* Enlace copyable compacto para móvil */}
                 <button
                   onClick={() => {
@@ -273,10 +273,10 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
                     navigator.clipboard.writeText(link);
                     showNotification('🔗 Enlace copiado', 'success');
                   }}
-                  className="bg-[#f69f16]/20 hover:bg-[#f69f16]/30 text-[#f69f16] font-medium py-2 px-3 rounded-lg transition-colors text-xs lg:text-sm border border-[#f69f16]/30"
+                  className="bg-[#f69f16]/20 hover:bg-[#f69f16]/30 text-[#f69f16] font-medium py-1.5 lg:py-2 px-2 lg:px-3 rounded-lg transition-colors text-xs lg:text-sm border border-[#f69f16]/30"
                   title="Copiar enlace personalizado"
                 >
-                  📋 Copiar Link
+                  📋 Link
                 </button>
                 <button
                   onClick={() => {
@@ -284,7 +284,7 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
                     showNotification('✅ Guardado exitosamente', 'success');
                   }}
                   disabled={isLoading}
-                  className="bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-2 px-3 rounded-lg transition-colors text-xs lg:text-sm disabled:opacity-50"
+                  className="bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-1.5 lg:py-2 px-2 lg:px-3 rounded-lg transition-colors text-xs lg:text-sm disabled:opacity-50"
                 >
                   {isLoading ? '⏳' : '💾'} Guardar
                 </button>
@@ -293,7 +293,7 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
           </div>
 
           {/* Content Area - Optimizado para móvil */}
-          <div className="flex-1 overflow-y-auto p-3 lg:p-6 bg-gradient-to-b from-transparent to-black/20">
+          <div className="flex-1 overflow-y-auto p-2 lg:p-6 bg-gradient-to-b from-transparent to-black/20">
             <div className="max-w-none">
               {activeSection === 'general' && <GeneralSection showNotification={showNotification} />}
               {activeSection === 'biography' && <BiographySection showNotification={showNotification} />}
@@ -378,49 +378,49 @@ const GeneralSection: React.FC<{ showNotification: (message: string, type?: 'suc
   const currentImage = previewImage || artistData?.heroImage || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=800&fit=crop&crop=face';
 
   return (
-    <div className="space-y-3 lg:space-y-6">
+    <div className="space-y-2 lg:space-y-6">
       {/* Información Básica */}
-      <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-3 lg:p-6">
-        <h3 className="text-base lg:text-lg font-semibold text-[#f69f16] mb-3 lg:mb-4">Información Básica</h3>
-        <div className="grid grid-cols-1 gap-3 lg:gap-6">
+      <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-2 lg:p-6">
+        <h3 className="text-sm lg:text-lg font-semibold text-[#f69f16] mb-2 lg:mb-4">Información Básica</h3>
+        <div className="grid grid-cols-1 gap-2 lg:gap-6">
           <div>
-            <label className="block text-xs lg:text-sm font-medium text-gray-300 mb-1 lg:mb-2">
+            <label className="block text-xs font-medium text-gray-300 mb-1">
               Nombre del Artista
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full p-2 lg:p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm lg:text-base"
+              className="w-full p-2 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-xs lg:text-sm font-medium text-gray-300 mb-1 lg:mb-2">
+            <label className="block text-xs font-medium text-gray-300 mb-1">
               Colectivo/Agencia
             </label>
             <input
               type="text"
               value={formData.collective}
               onChange={(e) => setFormData({ ...formData, collective: e.target.value })}
-              className="w-full p-2 lg:p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm lg:text-base"
+              className="w-full p-2 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-xs lg:text-sm font-medium text-gray-300 mb-1 lg:mb-2">
+            <label className="block text-xs font-medium text-gray-300 mb-1">
               Email de Contacto
             </label>
             <input
               type="email"
               value={formData.contactEmail}
               onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
-              className="w-full p-2 lg:p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm lg:text-base"
+              className="w-full p-2 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-xs lg:text-sm font-medium text-gray-300 mb-1 lg:mb-2">
+            <label className="block text-xs font-medium text-gray-300 mb-1">
               Sitio Web de la Agencia
             </label>
             <input
@@ -428,16 +428,16 @@ const GeneralSection: React.FC<{ showNotification: (message: string, type?: 'suc
               value={formData.agencyWebsite}
               onChange={(e) => setFormData({ ...formData, agencyWebsite: e.target.value })}
               placeholder="https://www.tuagencia.com"
-              className="w-full p-2 lg:p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm lg:text-base"
+              className="w-full p-2 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm"
             />
             <p className="text-xs text-gray-500 mt-1">
               Si tienes agencia, los visitantes podrán ir directamente a su sitio web
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs lg:text-sm font-medium text-gray-300 mb-1 lg:mb-2">
+              <label className="block text-xs font-medium text-gray-300 mb-1">
                 Base/Ciudad
               </label>
               <input
@@ -445,12 +445,12 @@ const GeneralSection: React.FC<{ showNotification: (message: string, type?: 'suc
                 value={formData.baseCity}
                 onChange={(e) => setFormData({ ...formData, baseCity: e.target.value })}
                 placeholder="León, España"
-                className="w-full p-2 lg:p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm lg:text-base"
+                className="w-full p-2 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-xs lg:text-sm font-medium text-gray-300 mb-1 lg:mb-2">
+              <label className="block text-xs font-medium text-gray-300 mb-1">
                 Años Activo
               </label>
               <input
@@ -458,7 +458,7 @@ const GeneralSection: React.FC<{ showNotification: (message: string, type?: 'suc
                 value={formData.yearsActive}
                 onChange={(e) => setFormData({ ...formData, yearsActive: e.target.value })}
                 placeholder="2020 - Presente"
-                className="w-full p-2 lg:p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm lg:text-base"
+                className="w-full p-2 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm"
               />
             </div>
           </div>
@@ -466,11 +466,11 @@ const GeneralSection: React.FC<{ showNotification: (message: string, type?: 'suc
       </div>
 
       {/* Detalles Musicales */}
-      <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-3 lg:p-6">
-        <h3 className="text-base lg:text-lg font-semibold text-[#f69f16] mb-3 lg:mb-4">Detalles Musicales</h3>
-        <div className="grid grid-cols-1 gap-3 lg:gap-6">
+      <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-2 lg:p-6">
+        <h3 className="text-sm lg:text-lg font-semibold text-[#f69f16] mb-2 lg:mb-4">Detalles Musicales</h3>
+        <div className="grid grid-cols-1 gap-2 lg:gap-6">
           <div>
-            <label className="block text-xs lg:text-sm font-medium text-gray-300 mb-1 lg:mb-2">
+            <label className="block text-xs font-medium text-gray-300 mb-1">
               Géneros Musicales
             </label>
             <input
@@ -478,13 +478,13 @@ const GeneralSection: React.FC<{ showNotification: (message: string, type?: 'suc
               value={formData.genres.join(', ')}
               onChange={(e) => setFormData({ ...formData, genres: e.target.value.split(', ').filter(g => g.trim()) })}
               placeholder="Techno, Hard Groove, Underground"
-              className="w-full p-2 lg:p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm lg:text-base"
+              className="w-full p-2 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm"
             />
             <p className="text-xs text-gray-500 mt-1">Separa los géneros con comas</p>
           </div>
 
           <div>
-            <label className="block text-xs lg:text-sm font-medium text-gray-300 mb-1 lg:mb-2">
+            <label className="block text-xs font-medium text-gray-300 mb-1">
               Sellos Discográficos
             </label>
             <input
@@ -492,13 +492,13 @@ const GeneralSection: React.FC<{ showNotification: (message: string, type?: 'suc
               value={formData.labels.join(', ')}
               onChange={(e) => setFormData({ ...formData, labels: e.target.value.split(', ').filter(l => l.trim()) })}
               placeholder="Independent, Underground Records"
-              className="w-full p-2 lg:p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm lg:text-base"
+              className="w-full p-2 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white text-sm"
             />
             <p className="text-xs text-gray-500 mt-1">Separa los sellos con comas</p>
           </div>
 
           <div>
-            <label className="block text-xs lg:text-sm font-medium text-gray-300 mb-1 lg:mb-2">
+            <label className="block text-xs font-medium text-gray-300 mb-1">
               Influencias Musicales
             </label>
             <textarea
@@ -506,19 +506,19 @@ const GeneralSection: React.FC<{ showNotification: (message: string, type?: 'suc
               onChange={(e) => setFormData({ ...formData, influences: e.target.value })}
               placeholder="Industrial Techno, Minimal, Hard Groove"
               rows={2}
-              className="w-full p-2 lg:p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white resize-none text-sm lg:text-base"
+              className="w-full p-2 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white resize-none text-sm"
             />
           </div>
         </div>
       </div>
 
       {/* Imagen de Portada */}
-      <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-3 lg:p-6">
-        <h3 className="text-base lg:text-lg font-semibold text-[#f69f16] mb-3 lg:mb-4">Imagen de Portada</h3>
+      <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-2 lg:p-6">
+        <h3 className="text-sm lg:text-lg font-semibold text-[#f69f16] mb-2 lg:mb-4">Imagen de Portada</h3>
         
         {/* Vista previa de la imagen actual */}
-        <div className="mb-4 lg:mb-6">
-          <div className="relative w-full h-32 lg:h-48 rounded-lg overflow-hidden bg-gray-800">
+        <div className="mb-3 lg:mb-6">
+          <div className="relative w-full h-24 lg:h-48 rounded-lg overflow-hidden bg-gray-800">
             <img
               src={currentImage}
               alt="Imagen de portada actual"
@@ -530,8 +530,8 @@ const GeneralSection: React.FC<{ showNotification: (message: string, type?: 'suc
             {isUploading && (
               <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="w-6 h-6 lg:w-8 lg:h-8 border-2 border-[#f69f16] border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                  <p className="text-white text-xs lg:text-sm">Subiendo...</p>
+                  <div className="w-4 h-4 lg:w-8 lg:h-8 border-2 border-[#f69f16] border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                  <p className="text-white text-xs">Subiendo...</p>
                 </div>
               </div>
             )}
@@ -550,14 +550,14 @@ const GeneralSection: React.FC<{ showNotification: (message: string, type?: 'suc
           />
           <label
             htmlFor="hero-upload"
-            className={`block w-full p-2 lg:p-3 border-2 border-dashed border-[#f69f16]/50 rounded-lg text-center cursor-pointer transition-colors text-sm lg:text-base ${
+            className={`block w-full p-2 border-2 border-dashed border-[#f69f16]/50 rounded-lg text-center cursor-pointer transition-colors text-sm ${
               isUploading 
                 ? 'opacity-50 cursor-not-allowed' 
                 : 'hover:border-[#f69f16] hover:bg-[#f69f16]/5'
             }`}
           >
             <span className="text-[#f69f16]">
-              {isUploading ? '⏳ Subiendo...' : '📸 Cambiar Imagen de Portada'}
+              {isUploading ? '⏳ Subiendo...' : '📸 Cambiar Imagen'}
             </span>
             <p className="text-xs text-gray-500 mt-1">
               JPG, PNG o WEBP (máx. 5MB)
@@ -566,22 +566,15 @@ const GeneralSection: React.FC<{ showNotification: (message: string, type?: 'suc
         </div>
 
         {/* Botón de Guardar */}
-        <div className="mt-4 lg:mt-6">
+        <div className="mt-3 lg:mt-6">
           <button
             onClick={handleSave}
-            className="w-full bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-2 lg:py-3 px-4 lg:px-6 rounded-lg transition-colors text-sm lg:text-base"
+            className="w-full bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-2 px-4 rounded-lg transition-colors text-sm"
           >
             💾 Guardar Cambios
           </button>
         </div>
       </div>
-
-      <button
-        onClick={handleSave}
-        className="bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-3 px-6 rounded-lg transition-colors"
-      >
-        Guardar Cambios
-      </button>
     </div>
   );
 };
