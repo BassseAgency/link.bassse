@@ -155,6 +155,28 @@ export const CMSProvider: React.FC<CMSProviderProps> = ({ children }) => {
           result = await SupabaseService.login('info@bassse.com', password);
         } else if (username === 'Adminksais') {
           result = await SupabaseService.login('contrataciones.ksais@gmail.com', password);
+        } else if (username === 'Pepe') {
+          // Usuario de prueba permanente - simulado localmente
+          if (password === 'Pepe123') {
+            const mockSession: CMSSession = {
+              user: {
+                uid: 'pepe-user-id',
+                email: 'pepe@ejemplo.com',
+                displayName: 'Pepe',
+                role: 'artist',
+                createdAt: new Date().toISOString(),
+                isActive: true
+              },
+              token: 'mock-jwt-token-pepe',
+              expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+            };
+            
+            setSession(mockSession);
+            localStorage.setItem('cms-session', JSON.stringify(mockSession));
+            await loadArtistData();
+            return true;
+          }
+          return false;
         } else {
           result = await SupabaseService.loginWithUsername(username, password);
         }
@@ -194,7 +216,7 @@ export const CMSProvider: React.FC<CMSProviderProps> = ({ children }) => {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Simulate validation - check if user already exists
-      if (username === 'AdminBasse' || username === 'Adminksais') {
+      if (username === 'AdminBasse' || username === 'Adminksais' || username === 'Pepe') {
         return false; // User already exists
       }
       

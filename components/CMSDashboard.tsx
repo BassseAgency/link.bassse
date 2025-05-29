@@ -63,6 +63,7 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
   const { session, artistData, logout, updateArtistData, uploadFile, generateZip, isLoading, getSaveHistory, clearSaveHistory, isAdminMode, editingArtist, exitAdminMode } = useCMS();
   const [activeSection, setActiveSection] = useState<CMSSection>('general');
   const [notifications, setNotifications] = useState<ToastNotification[]>([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Memoizar las secciones para evitar re-renders innecesarios
   const sections = useMemo(() => [
@@ -76,6 +77,14 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
     { id: 'design', name: 'Diseño & Colores', icon: '🎨' },
     { id: 'history', name: 'Historial', icon: '📋' }
   ], []);
+
+  // Cerrar sidebar en móvil cuando se cambia de sección
+  const handleSectionChange = (section: CMSSection) => {
+    setActiveSection(section);
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  };
 
   // Función para mostrar notificaciones - Optimizada
   const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
@@ -124,31 +133,60 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
       {/* Indicador de Modo Administrador */}
       {isAdminMode && (
         <div className="absolute top-0 left-0 right-0 bg-red-600 text-white text-center py-2 z-60">
-          <div className="flex items-center justify-center gap-4">
-            <span className="font-bold">🔧 MODO ADMINISTRADOR</span>
-            <span className="text-sm">Editando: {editingArtist}</span>
+          <div className="flex items-center justify-center gap-2 lg:gap-4 px-4">
+            <span className="font-bold text-sm lg:text-base">🔧 MODO ADMINISTRADOR</span>
+            <span className="text-xs lg:text-sm">Editando: {editingArtist}</span>
             <button
               onClick={() => {
                 exitAdminMode();
                 onClose();
               }}
-              className="bg-red-700 hover:bg-red-800 px-3 py-1 rounded text-sm font-medium transition-colors"
+              className="bg-red-700 hover:bg-red-800 px-2 lg:px-3 py-1 rounded text-xs lg:text-sm font-medium transition-colors"
             >
               Salir Modo Admin
             </button>
           </div>
         </div>
       )}
-      <div className={`h-full flex ${isAdminMode ? 'pt-12' : ''}`}>
+      <div className={`h-full flex relative ${isAdminMode ? 'pt-12' : ''}`}>
+        {/* Mobile Header */}
+        <div className="lg:hidden absolute top-0 left-0 right-0 h-16 bg-black/90 border-b border-orange-500/30 flex items-center justify-between px-4 z-20">
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="text-white hover:text-orange-500 transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <h1 className="text-lg font-bold text-orange-500">CMS Panel</h1>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Overlay para cerrar sidebar en móvil */}
+        {isSidebarOpen && (
+          <div 
+            className="lg:hidden fixed inset-0 bg-black/50 z-10"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar - Sin animaciones complejas */}
-        <div className="w-80 bg-black border-r border-[#f69f16]/30 flex flex-col">
+        <div className={`w-80 bg-black border-r border-[#f69f16]/30 flex flex-col transform transition-transform duration-300 z-30 ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } lg:translate-x-0 lg:relative lg:z-auto absolute inset-y-0 left-0`}>
           {/* Header */}
-          <div className="p-6 border-b border-[#f69f16]/30">
+          <div className="p-4 lg:p-6 pt-20 lg:pt-6 border-b border-[#f69f16]/30">
             <div className="flex items-center justify-between mb-4">
-              <h1 className="text-xl font-bold text-[#f69f16]">CMS Panel</h1>
+              <h1 className="text-lg lg:text-xl font-bold text-[#f69f16] hidden lg:block">CMS Panel</h1>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors hidden lg:block"
               >
                 ✕
               </button>
@@ -165,7 +203,7 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
               {sections.map((section) => (
                 <button
                   key={section.id}
-                  onClick={() => setActiveSection(section.id as CMSSection)}
+                  onClick={() => handleSectionChange(section.id as CMSSection)}
                   className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors duration-150 ${
                     activeSection === section.id
                       ? 'bg-[#f69f16]/20 text-[#f69f16] border border-[#f69f16]/30'
@@ -173,7 +211,7 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
                   }`}
                 >
                   <span className="text-lg">{section.icon}</span>
-                  <span className="font-medium">{section.name}</span>
+                  <span className="font-medium text-sm lg:text-base">{section.name}</span>
                 </button>
               ))}
             </div>
@@ -185,7 +223,7 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
             <div className="bg-[#f69f16]/10 border border-[#f69f16]/30 rounded-lg p-3 mb-3">
               <p className="text-xs text-gray-400 mb-2">Tu enlace personalizado:</p>
               <div className="flex items-center gap-2">
-                <code className="flex-1 bg-black/50 text-[#f69f16] text-sm px-2 py-1 rounded text-center">
+                <code className="flex-1 bg-black/50 text-[#f69f16] text-xs lg:text-sm px-2 py-1 rounded text-center">
                   link.bassse/{artistData?.slug || 'tu-nombre'}
                 </code>
                 <button
@@ -207,20 +245,20 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
 
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
             >
               🔗 Ver LINK.BASSSE
             </button>
             <button
               onClick={handleDownloadAll}
               disabled={isLoading}
-              className="w-full bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-2 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50"
+              className="w-full bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-2 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 text-sm"
             >
               {isLoading ? 'Generando...' : '📦 Descargar Todo'}
             </button>
             <button
               onClick={handleLogout}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
             >
               🚪 Cerrar Sesión
             </button>
@@ -228,11 +266,11 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden pt-16 lg:pt-0">
           {/* Content Header */}
-          <div className="p-6 border-b border-[#f69f16]/30 bg-black/50">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">
+          <div className="p-4 lg:p-6 border-b border-[#f69f16]/30 bg-black/50">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <h2 className="text-xl lg:text-2xl font-bold text-white">
                 {sections.find(s => s.id === activeSection)?.name}
               </h2>
               <div className="flex items-center gap-4">
@@ -250,7 +288,7 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
           </div>
 
           {/* Content Area - Sin AnimatePresence para mejor performance */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-4 lg:p-6">
             <div key={activeSection}>
               {activeSection === 'general' && <GeneralSection showNotification={showNotification} />}
               {activeSection === 'biography' && <BiographySection showNotification={showNotification} />}
@@ -335,11 +373,11 @@ const GeneralSection: React.FC<{ showNotification: (message: string, type?: 'suc
   const currentImage = previewImage || artistData?.heroImage || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=800&fit=crop&crop=face';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 lg:space-y-6">
       {/* Información Básica */}
-      <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-6">
+      <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-4 lg:p-6">
         <h3 className="text-lg font-semibold text-[#f69f16] mb-4">Información Básica</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Nombre del Artista

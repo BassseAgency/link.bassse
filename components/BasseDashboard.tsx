@@ -17,6 +17,7 @@ export const BasseDashboard: React.FC<BasseDashboardProps> = ({ onClose }) => {
   const [dashboardData, setDashboardData] = useState<BasseDashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<DashboardSection>('overview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Usuario actual (simulado para desarrollo)
   const currentUser = {
@@ -27,6 +28,14 @@ export const BasseDashboard: React.FC<BasseDashboardProps> = ({ onClose }) => {
   useEffect(() => {
     loadDashboardData();
   }, []);
+
+  // Cerrar sidebar en móvil cuando se cambia de sección
+  const handleSectionChange = (section: DashboardSection) => {
+    setActiveSection(section);
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  };
 
   const loadDashboardData = async () => {
     setIsLoading(true);
@@ -116,19 +125,48 @@ export const BasseDashboard: React.FC<BasseDashboardProps> = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/95 backdrop-blur-sm z-50 overflow-hidden">
-      <div className="h-full flex">
+      <div className="h-full flex relative">
+        {/* Mobile Header */}
+        <div className="lg:hidden absolute top-0 left-0 right-0 h-16 bg-black/90 border-b border-orange-500/30 flex items-center justify-between px-4 z-20">
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="text-white hover:text-orange-500 transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <h1 className="text-lg font-bold text-orange-500">BASSSE Dashboard</h1>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Overlay para cerrar sidebar en móvil */}
+        {isSidebarOpen && (
+          <div 
+            className="lg:hidden fixed inset-0 bg-black/50 z-10"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
         <div 
-          className="w-80 bg-black flex flex-col"
+          className={`w-80 bg-black flex flex-col transform transition-transform duration-300 z-30 ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } lg:translate-x-0 lg:relative lg:z-auto absolute inset-y-0 left-0`}
           style={{ borderRight: `1px solid ${primaryColor}30` }}
         >
           {/* Header con nombre del usuario */}
-          <div className="p-6" style={{ borderBottom: `1px solid ${primaryColor}30` }}>
+          <div className="p-4 lg:p-6 pt-20 lg:pt-6" style={{ borderBottom: `1px solid ${primaryColor}30` }}>
             <div className="flex items-center justify-between mb-4">
-              <h1 className="text-xl font-bold" style={{ color: primaryColor }}>BASSSE Dashboard</h1>
+              <h1 className="text-lg lg:text-xl font-bold hidden lg:block" style={{ color: primaryColor }}>BASSSE Dashboard</h1>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors hidden lg:block"
               >
                 ✕
               </button>
@@ -140,12 +178,12 @@ export const BasseDashboard: React.FC<BasseDashboardProps> = ({ onClose }) => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4">
+          <nav className="flex-1 p-4 lg:p-4">
             <div className="space-y-2">
               {sections.map((section) => (
                 <button
                   key={section.id}
-                  onClick={() => setActiveSection(section.id as DashboardSection)}
+                  onClick={() => handleSectionChange(section.id as DashboardSection)}
                   className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-150 ${
                     activeSection === section.id
                       ? 'text-gray-400 hover:text-white hover:bg-gray-800/50'
@@ -168,13 +206,13 @@ export const BasseDashboard: React.FC<BasseDashboardProps> = ({ onClose }) => {
           <div className="p-4 space-y-2" style={{ borderTop: `1px solid ${primaryColor}30` }}>
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
             >
               🔗 Ver LINK.BASSSE
             </button>
             <button
               onClick={handleLogout}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
             >
               🚪 Cerrar Sesión
             </button>
@@ -186,16 +224,16 @@ export const BasseDashboard: React.FC<BasseDashboardProps> = ({ onClose }) => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden pt-16 lg:pt-0">
           {/* Content Header */}
-          <div className="p-6 bg-black/50" style={{ borderBottom: `1px solid ${primaryColor}30` }}>
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">
+          <div className="p-4 lg:p-6 bg-black/50" style={{ borderBottom: `1px solid ${primaryColor}30` }}>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <h2 className="text-xl lg:text-2xl font-bold text-white">
                 {sections.find(s => s.id === activeSection)?.name}
               </h2>
               <button
                 onClick={loadDashboardData}
-                className="text-black font-medium py-2 px-4 rounded-lg transition-colors"
+                className="text-black font-medium py-2 px-4 rounded-lg transition-colors text-sm lg:text-base self-start sm:self-auto"
                 style={{ backgroundColor: primaryColor }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = `${primaryColor}CC`;
@@ -210,7 +248,7 @@ export const BasseDashboard: React.FC<BasseDashboardProps> = ({ onClose }) => {
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-4 lg:p-6">
             <div>
               {activeSection === 'overview' && <OverviewSection data={dashboardData} />}
               {activeSection === 'artists' && <ArtistsSection data={dashboardData} onSendPasswordReset={handleSendPasswordReset} enterAdminMode={enterAdminMode} onClose={onClose} />}
@@ -238,73 +276,75 @@ const OverviewSection: React.FC<{ data: BasseDashboardData | null }> = ({ data }
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 lg:space-y-6">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-black/30 rounded-lg p-6"
+            className="bg-black/30 rounded-lg p-4 lg:p-6"
             style={{ border: `1px solid ${primaryColor}20` }}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-400 text-sm">{stat.label}</p>
-                <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+                <p className="text-gray-400 text-xs lg:text-sm">{stat.label}</p>
+                <p className={`text-lg lg:text-2xl font-bold ${stat.color}`}>{stat.value}</p>
               </div>
-              <span className="text-3xl">{stat.icon}</span>
+              <span className="text-2xl lg:text-3xl">{stat.icon}</span>
             </div>
           </motion.div>
         ))}
       </div>
 
-      {/* Top Artists */}
-      <div className="bg-black/30 rounded-lg p-6" style={{ border: `1px solid ${primaryColor}20` }}>
-        <h3 className="text-xl font-bold mb-4" style={{ color: primaryColor }}>Artistas Más Populares</h3>
-        <div className="space-y-3">
-          {data.topArtists.map((artist, index) => (
-            <div key={artist.artistId} className="flex items-center justify-between p-3 bg-black/50 rounded-lg">
-              <div className="flex items-center gap-3">
-                <span className="font-bold" style={{ color: primaryColor }}>#{index + 1}</span>
-                <div>
-                  <p className="font-semibold text-white">{artist.name}</p>
-                  <p className="text-sm text-gray-400">/{artist.slug}</p>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
+        {/* Top Artists */}
+        <div className="bg-black/30 rounded-lg p-4 lg:p-6" style={{ border: `1px solid ${primaryColor}20` }}>
+          <h3 className="text-lg lg:text-xl font-bold mb-4" style={{ color: primaryColor }}>Artistas Más Populares</h3>
+          <div className="space-y-3">
+            {data.topArtists.map((artist, index) => (
+              <div key={artist.artistId} className="flex items-center justify-between p-3 bg-black/50 rounded-lg">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <span className="font-bold text-sm lg:text-base" style={{ color: primaryColor }}>#{index + 1}</span>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-white text-sm lg:text-base truncate">{artist.name}</p>
+                    <p className="text-xs lg:text-sm text-gray-400 truncate">/{artist.slug}</p>
+                  </div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="text-green-400 font-semibold text-xs lg:text-sm">{artist.views} vistas</p>
+                  <p className="text-purple-400 text-xs">{artist.downloads} descargas</p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-green-400 font-semibold">{artist.views} vistas</p>
-                <p className="text-purple-400 text-sm">{artist.downloads} descargas</p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Recent Leads */}
-      <div className="bg-black/30 rounded-lg p-6" style={{ border: `1px solid ${primaryColor}20` }}>
-        <h3 className="text-xl font-bold mb-4" style={{ color: primaryColor }}>Leads Recientes</h3>
-        <div className="space-y-3">
-          {data.recentLeads.slice(0, 5).map((lead) => (
-            <div key={lead.id} className="flex items-center justify-between p-3 bg-black/50 rounded-lg">
-              <div>
-                <p className="font-semibold text-white">{lead.email}</p>
-                <p className="text-sm text-gray-400">{lead.artistSlug} • {lead.source}</p>
+        {/* Recent Leads */}
+        <div className="bg-black/30 rounded-lg p-4 lg:p-6" style={{ border: `1px solid ${primaryColor}20` }}>
+          <h3 className="text-lg lg:text-xl font-bold mb-4" style={{ color: primaryColor }}>Leads Recientes</h3>
+          <div className="space-y-3">
+            {data.recentLeads.slice(0, 5).map((lead) => (
+              <div key={lead.id} className="flex items-center justify-between p-3 bg-black/50 rounded-lg">
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-white text-sm lg:text-base truncate">{lead.email}</p>
+                  <p className="text-xs lg:text-sm text-gray-400 truncate">{lead.artistSlug} • {lead.source}</p>
+                </div>
+                <div className="text-right flex-shrink-0 ml-3">
+                  <p className="text-xs lg:text-sm text-gray-400">
+                    {new Date(lead.createdAt).toLocaleDateString()}
+                  </p>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    lead.isProcessed ? 'bg-green-600 text-white' : 'bg-yellow-600 text-black'
+                  }`}>
+                    {lead.isProcessed ? 'Procesado' : 'Pendiente'}
+                  </span>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-400">
-                  {new Date(lead.createdAt).toLocaleDateString()}
-                </p>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  lead.isProcessed ? 'bg-green-600 text-white' : 'bg-yellow-600 text-black'
-                }`}>
-                  {lead.isProcessed ? 'Procesado' : 'Pendiente'}
-                </span>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>
