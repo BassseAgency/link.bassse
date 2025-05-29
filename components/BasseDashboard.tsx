@@ -13,23 +13,16 @@ type DashboardSection = 'overview' | 'artists' | 'leads' | 'metrics' | 'settings
 
 export const BasseDashboard: React.FC<BasseDashboardProps> = ({ onClose }) => {
   const { primaryColor } = useDesign();
-  const { enterAdminMode } = useCMS();
-  const [activeSection, setActiveSection] = useState<DashboardSection>('overview');
+  const { enterAdminMode, logout } = useCMS(); // Importar logout del contexto
   const [dashboardData, setDashboardData] = useState<BasseDashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState<DashboardSection>('overview');
 
-  // Obtener nombre del usuario desde localStorage
-  const currentUser = useMemo(() => {
-    const userData = localStorage.getItem('currentUser');
-    if (userData) {
-      try {
-        return JSON.parse(userData);
-      } catch {
-        return { username: 'Administrador', role: 'admin' };
-      }
-    }
-    return { username: 'Administrador', role: 'admin' };
-  }, []);
+  // Usuario actual (simulado para desarrollo)
+  const currentUser = {
+    username: 'BASSSE Admin',
+    role: 'bassse_admin'
+  };
 
   useEffect(() => {
     loadDashboardData();
@@ -37,29 +30,51 @@ export const BasseDashboard: React.FC<BasseDashboardProps> = ({ onClose }) => {
 
   const loadDashboardData = async () => {
     setIsLoading(true);
-    try {
-      const globalMetrics = await MetricsService.getGlobalMetrics();
-      const topArtists = await MetricsService.getTopArtists(5);
-      const recentLeads = await MetricsService.getRecentLeads(10);
-
-      const data: BasseDashboardData = {
-        totalArtists: globalMetrics.totalArtists,
-        activeArtists: globalMetrics.totalArtists,
-        totalViews: globalMetrics.totalViews,
-        totalDownloads: globalMetrics.totalDownloads,
-        totalLeads: globalMetrics.totalLeads,
-        topArtists,
-        recentMetrics: [],
-        recentLeads,
-        lastUpdated: new Date().toISOString()
-      };
-
-      setDashboardData(data);
-    } catch (error) {
-      console.error('Error cargando dashboard:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    
+    // Simular carga de datos del dashboard
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const mockData: BasseDashboardData = {
+      totalArtists: 47,
+      activeArtists: 47,
+      totalViews: 125890,
+      totalDownloads: 8456,
+      totalLeads: 234,
+      topArtists: [
+        { artistId: '1', name: 'K-SAIS', slug: 'k-sais', views: 15420, downloads: 1234 },
+        { artistId: '2', name: 'DJ Example', slug: 'dj-example', views: 12890, downloads: 987 },
+        { artistId: '3', name: 'Beat Maker', slug: 'beat-maker', views: 10560, downloads: 756 }
+      ],
+      recentMetrics: [],
+      recentLeads: [
+        { 
+          id: '1', 
+          artistSlug: 'k-sais', 
+          name: 'Festival XYZ', 
+          email: 'booking@festivalxyz.com', 
+          source: 'booking_inquiry', 
+          priority: 'high', 
+          createdAt: '2024-02-10T10:00:00Z',
+          isProcessed: false,
+          ipAddress: '192.168.1.1'
+        },
+        { 
+          id: '2', 
+          artistSlug: 'dj-example', 
+          name: 'Club ABC', 
+          email: 'events@clubabc.com', 
+          source: 'social_media', 
+          priority: 'medium', 
+          createdAt: '2024-02-09T14:30:00Z',
+          isProcessed: false,
+          ipAddress: '192.168.1.2'
+        }
+      ],
+      lastUpdated: new Date().toISOString()
+    };
+    
+    setDashboardData(mockData);
+    setIsLoading(false);
   };
 
   const handleSendPasswordReset = async (email: string, artistName: string) => {
@@ -72,10 +87,9 @@ export const BasseDashboard: React.FC<BasseDashboardProps> = ({ onClose }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('userRole');
-    onClose();
+    // Usar la función logout del contexto CMS que maneja todo correctamente
+    logout();
+    // onClose se ejecutará automáticamente cuando se recargue la página
   };
 
   const sections = useMemo(() => [

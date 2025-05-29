@@ -4,9 +4,10 @@ import { useDesign } from '../hooks/useDesign';
 interface LogoProps {
   size?: 'small' | 'medium' | 'large';
   className?: string;
+  useFile?: boolean;
 }
 
-export const Logo: React.FC<LogoProps> = ({ size = 'medium', className = '' }) => {
+export const Logo: React.FC<LogoProps> = ({ size = 'medium', className = '', useFile = false }) => {
   const { primaryColor } = useDesign();
   
   const sizes = {
@@ -16,6 +17,21 @@ export const Logo: React.FC<LogoProps> = ({ size = 'medium', className = '' }) =
   };
   
   const currentSize = sizes[size];
+
+  if (useFile) {
+    return (
+      <div className={`inline-flex items-center ${className}`}>
+        <img 
+          src="/images/link-bassse-logo.svg" 
+          alt="LINK.BASSSE Logo"
+          width={currentSize.width}
+          height={currentSize.height}
+          className="flex-shrink-0"
+          style={{ filter: `brightness(0) saturate(100%) invert(48%) sepia(79%) saturate(2476%) hue-rotate(25deg) brightness(118%) contrast(119%)` }}
+        />
+      </div>
+    );
+  }
   
   return (
     <div className={`inline-flex items-center ${className}`}>

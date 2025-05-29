@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCMS } from '../src/context/CMSContext';
+import { ArtistVideo } from '../types';
 
 interface CMSDashboardProps {
   onClose: () => void;
@@ -12,7 +13,7 @@ interface ToastNotification {
   type: 'success' | 'error' | 'info';
 }
 
-type CMSSection = 'general' | 'biography' | 'social' | 'sets' | 'gallery' | 'documents' | 'design' | 'history';
+type CMSSection = 'general' | 'biography' | 'social' | 'sets' | 'gallery' | 'videos' | 'documents' | 'design' | 'history';
 
 // Componente Toast optimizado
 const Toast: React.FC<{ notification: ToastNotification; onClose: (id: string) => void }> = ({ notification, onClose }) => {
@@ -70,19 +71,24 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
     { id: 'social', name: 'Redes Sociales', icon: '🌐' },
     { id: 'sets', name: 'Sets & Media', icon: '🎵' },
     { id: 'gallery', name: 'Galería', icon: '📸' },
+    { id: 'videos', name: 'Videos', icon: '📹' },
     { id: 'documents', name: 'Documentos', icon: '📄' },
     { id: 'design', name: 'Diseño & Colores', icon: '🎨' },
     { id: 'history', name: 'Historial', icon: '📋' }
   ], []);
 
-  // Función para mostrar notificaciones
+  // Función para mostrar notificaciones - Optimizada
   const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
     const notification: ToastNotification = {
       id: Date.now().toString(),
       message,
       type
     };
-    setNotifications(prev => [...prev, notification]);
+    setNotifications(prev => {
+      // Limitar a máximo 3 notificaciones para mejor performance
+      const newNotifications = [notification, ...prev.slice(0, 2)];
+      return newNotifications;
+    });
   };
 
   // Función para cerrar notificaciones
@@ -95,8 +101,9 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
   }
 
   const handleLogout = () => {
+    // La función logout del contexto ya maneja la recarga de la página
+    // No necesitamos llamar onClose() porque la página se recargará
     logout();
-    onClose();
   };
 
   const handleDownloadAll = async () => {
@@ -174,6 +181,30 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
 
           {/* Footer */}
           <div className="p-4 border-t border-[#f69f16]/30 space-y-2">
+            {/* Enlace copyable del usuario */}
+            <div className="bg-[#f69f16]/10 border border-[#f69f16]/30 rounded-lg p-3 mb-3">
+              <p className="text-xs text-gray-400 mb-2">Tu enlace personalizado:</p>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 bg-black/50 text-[#f69f16] text-sm px-2 py-1 rounded text-center">
+                  link.bassse/{artistData?.slug || 'tu-nombre'}
+                </code>
+                <button
+                  onClick={() => {
+                    const link = `link.bassse/${artistData?.slug || 'tu-nombre'}`;
+                    navigator.clipboard.writeText(link);
+                    showNotification('🔗 Enlace copiado al portapapeles', 'success');
+                  }}
+                  className="bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium px-3 py-1 rounded text-xs transition-colors"
+                  title="Copiar enlace"
+                >
+                  📋
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Comparte este enlace en tus redes sociales
+              </p>
+            </div>
+
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
@@ -226,6 +257,7 @@ export const CMSDashboard: React.FC<CMSDashboardProps> = ({ onClose }) => {
               {activeSection === 'social' && <SocialSection showNotification={showNotification} />}
               {activeSection === 'sets' && <SetsSection showNotification={showNotification} />}
               {activeSection === 'gallery' && <GallerySection showNotification={showNotification} />}
+              {activeSection === 'videos' && <VideosSection showNotification={showNotification} />}
               {activeSection === 'documents' && <DocumentsSection showNotification={showNotification} />}
               {activeSection === 'design' && <DesignSection showNotification={showNotification} />}
               {activeSection === 'history' && <HistorySection showNotification={showNotification} />}
@@ -967,41 +999,318 @@ const GallerySection: React.FC<{ showNotification: (message: string, type?: 'suc
   );
 };
 
-// Sección Documentos
-const DocumentsSection: React.FC<{ showNotification: (message: string, type?: 'success' | 'error' | 'info') => void }> = ({ showNotification }) => {
+// Sección Videos
+const VideosSection: React.FC<{ showNotification: (message: string, type?: 'success' | 'error' | 'info') => void }> = ({ showNotification }) => {
   const { artistData, updateArtistData, uploadFile } = useCMS();
-  const [documents, setDocuments] = useState({
-    technicalRider: artistData?.documents?.technicalRider || undefined,
-    pressKit: artistData?.documents?.pressKit || undefined,
-    contract: artistData?.documents?.contract || undefined,
-    insurance: artistData?.documents?.insurance || undefined
+  const [videos, setVideos] = useState<ArtistVideo[]>(artistData?.videos || []);
+  const [newVideo, setNewVideo] = useState({
+    title: '',
+    url: '',
+    thumbnail: '',
+    type: 'youtube' as 'upload' | 'youtube' | 'drive' | 'vimeo',
+    embedCode: '',
+    duration: '',
+    description: ''
   });
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
+  const handleAddVideo = () => {
+    if (newVideo.title && (newVideo.url || newVideo.embedCode)) {
+      const videoToAdd: ArtistVideo = {
+        id: Date.now().toString(),
+        title: newVideo.title,
+        url: newVideo.url || newVideo.embedCode,
+        thumbnail: newVideo.thumbnail || '/images/default-video-thumb.jpg',
+        type: newVideo.type,
+        embedCode: newVideo.embedCode,
+        duration: newVideo.duration,
+        description: newVideo.description,
+        order: videos.length + 1,
+        isVisible: true,
+        uploadedAt: new Date().toISOString()
+      };
+      setVideos([...videos, videoToAdd]);
+      setNewVideo({ 
+        title: '', 
+        url: '', 
+        thumbnail: '', 
+        type: 'youtube', 
+        embedCode: '', 
+        duration: '', 
+        description: '' 
+      });
+      showNotification('✅ Video agregado exitosamente', 'success');
+    }
+  };
+
+  const handleRemoveVideo = (id: string) => {
+    setVideos(videos.filter(video => video.id !== id));
+    showNotification('✅ Video eliminado', 'success');
+  };
+
+  const handleSave = async () => {
+    const success = await updateArtistData({ videos }, 'Videos');
+    if (success) {
+      showNotification('✅ Videos guardados permanentemente', 'success');
+    } else {
+      showNotification('❌ Error guardando los videos', 'error');
+    }
+  };
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       try {
-        const url = await uploadFile(file, 'documents');
-        setDocuments({
-          ...documents,
-          [type]: {
-            name: file.name,
-            url,
-            uploadDate: new Date().toISOString()
-          }
-        });
-        showNotification(`✅ ${file.name} subido exitosamente`, 'success');
+        const url = await uploadFile(file, 'document');
+        setNewVideo(prev => ({ ...prev, url }));
+        showNotification('✅ Video subido exitosamente', 'success');
       } catch (error) {
-        showNotification('❌ Error subiendo el archivo', 'error');
+        showNotification('❌ Error subiendo el video', 'error');
       }
     }
   };
 
-  const handleRemoveDocument = (type: string) => {
-    setDocuments({
-      ...documents,
-      [type]: undefined
-    });
+  return (
+    <div className="space-y-6">
+      {/* Agregar nuevo video */}
+      <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-[#f69f16] mb-4">📹 Agregar Nuevo Video</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Título del Video *
+            </label>
+            <input
+              type="text"
+              value={newVideo.title}
+              onChange={(e) => setNewVideo({ ...newVideo, title: e.target.value })}
+              placeholder="Título del video..."
+              className="w-full p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white"
+            />
+              </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Tipo de Video
+            </label>
+            <select
+              value={newVideo.type}
+              onChange={(e) => setNewVideo({ ...newVideo, type: e.target.value as any })}
+              className="w-full p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white"
+            >
+              <option value="youtube">YouTube</option>
+              <option value="vimeo">Vimeo</option>
+              <option value="drive">Google Drive</option>
+              <option value="upload">Subir Archivo</option>
+            </select>
+                  </div>
+                </div>
+
+        {newVideo.type === 'upload' ? (
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Subir Video
+            </label>
+                  <input
+                    type="file"
+              accept="video/*"
+              onChange={handleVideoUpload}
+              className="w-full p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white"
+            />
+          </div>
+        ) : (
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              URL del Video
+                  </label>
+            <input
+              type="url"
+              value={newVideo.url}
+              onChange={(e) => setNewVideo({ ...newVideo, url: e.target.value })}
+              placeholder="https://..."
+              className="w-full p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white"
+            />
+                </div>
+              )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              URL de Thumbnail
+            </label>
+              <input
+              type="url"
+              value={newVideo.thumbnail}
+              onChange={(e) => setNewVideo({ ...newVideo, thumbnail: e.target.value })}
+              placeholder="https://..."
+              className="w-full p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Duración
+            </label>
+              <input
+                type="text"
+              value={newVideo.duration}
+              onChange={(e) => setNewVideo({ ...newVideo, duration: e.target.value })}
+              placeholder="ej: 45:32"
+              className="w-full p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white"
+            />
+          </div>
+        </div>
+
+        {(newVideo.type === 'youtube' || newVideo.type === 'vimeo') && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Código de Embed (Opcional)
+            </label>
+            <textarea
+              value={newVideo.embedCode}
+              onChange={(e) => setNewVideo({ ...newVideo, embedCode: e.target.value })}
+              placeholder="Pega aquí el código iframe de embed..."
+              rows={3}
+              className="w-full p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white resize-none"
+            />
+                </div>
+        )}
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Descripción (Opcional)
+          </label>
+          <textarea
+            value={newVideo.description}
+            onChange={(e) => setNewVideo({ ...newVideo, description: e.target.value })}
+            placeholder="Descripción del video..."
+            rows={2}
+            className="w-full p-3 bg-black/50 border border-[#f69f16]/30 rounded-lg text-white resize-none"
+          />
+                </div>
+
+              <button
+          onClick={handleAddVideo}
+          disabled={!newVideo.title || (!newVideo.url && !newVideo.embedCode)}
+          className="bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          📥 Agregar Video
+              </button>
+          </div>
+
+      {/* Lista de videos existentes */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-white">🎬 Videos Existentes ({videos.length})</h3>
+        
+        {videos.length === 0 ? (
+          <p className="text-gray-400 text-center py-8">
+            No hay videos agregados. ¡Agrega tu primer video!
+          </p>
+        ) : (
+          videos.map((video) => (
+            <div key={video.id} className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-4">
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex-1">
+                  <h4 className="font-semibold text-white mb-1">{video.title}</h4>
+                  <div className="flex items-center gap-4 text-sm text-gray-400">
+                    <span className="bg-[#f69f16]/20 text-[#f69f16] px-2 py-1 rounded text-xs">
+                      {video.type.toUpperCase()}
+            </span>
+                    {video.duration && <span>⏱️ {video.duration}</span>}
+          </div>
+                  {video.description && (
+                    <p className="text-sm text-gray-300 mt-2">{video.description}</p>
+                  )}
+        </div>
+          <button
+                  onClick={() => handleRemoveVideo(video.id)}
+                  className="text-red-400 hover:text-red-300 transition-colors ml-4"
+                  title="Eliminar video"
+                >
+                  🗑️
+          </button>
+      </div>
+
+              <div className="bg-gray-800 rounded p-2 mb-2">
+                {video.embedCode ? (
+                  <div 
+                    dangerouslySetInnerHTML={{ __html: video.embedCode }}
+                    className="max-h-64 overflow-hidden"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-32 bg-gray-700 rounded">
+                    <div className="text-center">
+                      <p className="text-gray-400 mb-2">Vista previa no disponible</p>
+                      <a 
+                        href={video.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-[#f69f16] hover:text-[#e6950f] underline text-sm"
+                      >
+                        🔗 Ver video
+                      </a>
+                      </div>
+                    </div>
+                )}
+                </div>
+
+              <div className="text-xs text-gray-500">
+                <p>📅 Agregado: {new Date(video.uploadedAt).toLocaleString()}</p>
+                {video.url && (
+                  <p className="truncate">🔗 URL: {video.url}</p>
+                )}
+                      </div>
+                  </div>
+          ))
+        )}
+      </div>
+
+      {/* Información sobre videos */}
+      <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+        <h4 className="text-blue-400 font-semibold mb-2">💡 Información sobre Videos</h4>
+        <ul className="text-sm text-gray-300 space-y-1">
+          <li>• <strong>YouTube/Vimeo:</strong> Usa la URL del video y opcionalmente el código embed</li>
+          <li>• <strong>Google Drive:</strong> Asegúrate de que el video sea público o compartido</li>
+          <li>• <strong>Subir Archivo:</strong> Sube videos directamente (máximo 100MB)</li>
+          <li>• <strong>Thumbnail:</strong> Se mostrará como imagen de vista previa del video</li>
+          <li>• Los videos aparecerán en la sección "Videos" de tu página pública</li>
+        </ul>
+        </div>
+
+      <button
+        onClick={handleSave}
+        className="w-full bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-3 px-6 rounded-lg transition-colors"
+      >
+        💾 Guardar Todos los Videos
+      </button>
+    </div>
+  );
+};
+
+// Sección Documentos
+const DocumentsSection: React.FC<{ showNotification: (message: string, type?: 'success' | 'error' | 'info') => void }> = ({ showNotification }) => {
+  const { artistData, updateArtistData, uploadFile } = useCMS();
+  const [documents, setDocuments] = useState(artistData?.documents || {});
+
+  const handleDocumentUpload = async (type: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        const url = await uploadFile(file, 'documents');
+        const newDoc = {
+          id: Date.now().toString(),
+          name: file.name,
+          url,
+          type: file.type,
+          size: file.size,
+          uploadDate: new Date().toISOString()
+        };
+        setDocuments(prev => ({ ...prev, [type]: newDoc }));
+        showNotification(`✅ ${type} subido exitosamente`, 'success');
+      } catch (error) {
+        showNotification('❌ Error subiendo documento', 'error');
+      }
+    }
   };
 
   const handleSave = async () => {
@@ -1009,499 +1318,292 @@ const DocumentsSection: React.FC<{ showNotification: (message: string, type?: 's
     if (success) {
       showNotification('✅ Documentos guardados permanentemente', 'success');
     } else {
-      showNotification('❌ Error guardando los documentos', 'error');
+      showNotification('❌ Error guardando documentos', 'error');
     }
   };
 
   const documentTypes = [
-    { 
-      key: 'technicalRider', 
-      name: 'Rider Técnico', 
-      icon: '🎛️',
-      description: 'Especificaciones técnicas para performances'
-    },
-    { 
-      key: 'pressKit', 
-      name: 'Press Kit', 
-      icon: '📰',
-      description: 'Kit de prensa completo'
-    },
-    { 
-      key: 'contract', 
-      name: 'Contrato Tipo', 
-      icon: '📋',
-      description: 'Plantilla de contrato para bookings'
-    },
-    { 
-      key: 'insurance', 
-      name: 'Seguro', 
-      icon: '🛡️',
-      description: 'Documentos de seguro y responsabilidad'
-    }
+    { key: 'technicalRider', name: 'Rider Técnico', icon: '🎛️' },
+    { key: 'pressKit', name: 'Press Kit', icon: '📄' },
+    { key: 'contract', name: 'Contrato Modelo', icon: '📋' },
+    { key: 'insurance', name: 'Seguro', icon: '🛡️' }
   ];
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {documentTypes.map((docType) => {
-          const doc = documents[docType.key as keyof typeof documents];
-          return (
-            <div key={docType.key} className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-2xl">{docType.icon}</span>
-                <div>
-                  <h3 className="font-semibold text-white">{docType.name}</h3>
-                  <p className="text-xs text-gray-400">{docType.description}</p>
+        {documentTypes.map((docType) => (
+          <div key={docType.key} className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-[#f69f16] mb-4">
+              {docType.icon} {docType.name}
+            </h3>
+            
+            {documents[docType.key as keyof typeof documents] ? (
+              <div className="space-y-3">
+                <div className="bg-black/50 rounded p-3">
+                  <p className="text-white font-medium">{(documents[docType.key as keyof typeof documents] as any)?.name}</p>
+                  <p className="text-xs text-gray-400">
+                    {((documents[docType.key as keyof typeof documents] as any)?.size / (1024 * 1024)).toFixed(2)} MB
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <a
+                    href={(documents[docType.key as keyof typeof documents] as any)?.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-3 rounded text-sm"
+                  >
+                    Ver Documento
+                  </a>
+                  <button
+                    onClick={() => setDocuments(prev => ({ ...prev, [docType.key]: undefined }))}
+                    className="bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded text-sm"
+                  >
+                    🗑️
+                  </button>
                 </div>
               </div>
-
-              {doc ? (
-                <div className="space-y-3">
-                  <div className="bg-black/50 rounded-lg p-3">
-                    <p className="text-sm text-white font-medium">{doc.name}</p>
-                    <p className="text-xs text-gray-400">
-                      Subido: {new Date(doc.uploadDate).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => window.open(doc.url, '_blank')}
-                      className="flex-1 bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-2 px-3 rounded text-sm transition-colors"
-                    >
-                      Ver/Descargar
-                    </button>
-                    <button
-                      onClick={() => handleRemoveDocument(docType.key)}
-                      className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-3 rounded text-sm transition-colors"
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="border-2 border-dashed border-[#f69f16]/30 rounded-lg p-4 text-center">
-                  <input
-                    type="file"
-                    accept=".pdf,.doc,.docx"
-                    onChange={(e) => handleFileUpload(e, docType.key)}
-                    className="hidden"
-                    id={`${docType.key}-upload`}
-                  />
-                  <label htmlFor={`${docType.key}-upload`} className="cursor-pointer">
-                    <div className="text-[#f69f16] mb-2">📄</div>
-                    <p className="text-gray-400 text-sm">Subir archivo</p>
-                    <p className="text-xs text-gray-500">PDF, DOC hasta 10MB</p>
-                  </label>
-                </div>
-              )}
-            </div>
-          );
-        })}
+            ) : (
+              <div className="border-2 border-dashed border-[#f69f16]/30 rounded-lg p-4 text-center">
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={(e) => handleDocumentUpload(docType.key, e)}
+                  className="hidden"
+                  id={`${docType.key}-upload`}
+                />
+                <label htmlFor={`${docType.key}-upload`} className="cursor-pointer">
+                  <div className="text-[#f69f16] mb-2 text-2xl">{docType.icon}</div>
+                  <p className="text-gray-400 text-sm">Subir {docType.name}</p>
+                </label>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
       <button
         onClick={handleSave}
-        className="bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-3 px-6 rounded-lg transition-colors"
+        className="w-full bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-3 px-6 rounded-lg transition-colors"
       >
-        Guardar Documentos
+        💾 Guardar Documentos
       </button>
     </div>
   );
 };
 
-// Sección Diseño y Colores
+// Sección Diseño
 const DesignSection: React.FC<{ showNotification: (message: string, type?: 'success' | 'error' | 'info') => void }> = ({ showNotification }) => {
   const { artistData, updateArtistData } = useCMS();
-  const [designConfig, setDesignConfig] = useState({
-    primaryColor: artistData?.design?.primaryColor || '#f69f16',
-    secondaryColor: artistData?.design?.secondaryColor || '#e6950f',
-    photosLayout: artistData?.design?.photosLayout || 'grid',
-    buttonStyle: artistData?.design?.buttonStyle || 'rounded'
+  const [design, setDesign] = useState(artistData?.design || {
+    primaryColor: '#f69f16',
+    secondaryColor: '#e6950f',
+    photosLayout: 'grid',
+    buttonStyle: 'rounded'
   });
 
-  const colorPresets = [
-    { name: 'Naranja (Defecto)', primary: '#f69f16', secondary: '#e6950f' },
-    { name: 'Azul Eléctrico', primary: '#3b82f6', secondary: '#1d4ed8' },
-    { name: 'Verde Neón', primary: '#10b981', secondary: '#059669' },
-    { name: 'Púrpura', primary: '#8b5cf6', secondary: '#7c3aed' },
-    { name: 'Rosa', primary: '#ec4899', secondary: '#db2777' },
-    { name: 'Rojo', primary: '#ef4444', secondary: '#dc2626' },
-    { name: 'Amarillo', primary: '#f59e0b', secondary: '#d97706' },
-    { name: 'Cian', primary: '#06b6d4', secondary: '#0891b2' }
-  ];
-
   const handleSave = async () => {
-    const success = await updateArtistData({
-      design: designConfig
-    }, 'diseño');
-
+    const success = await updateArtistData({ design }, 'Diseño');
     if (success) {
-      showNotification('✅ Configuración de diseño guardada exitosamente', 'success');
+      showNotification('✅ Diseño guardado permanentemente', 'success');
     } else {
-      showNotification('❌ Error guardando la configuración', 'error');
+      showNotification('❌ Error guardando el diseño', 'error');
     }
   };
 
-  const applyColorPreset = (preset: typeof colorPresets[0]) => {
-    setDesignConfig(prev => ({
-      ...prev,
-      primaryColor: preset.primary,
-      secondaryColor: preset.secondary
-    }));
-  };
+  const presetColors = [
+    '#f69f16', '#e6950f', '#ff6b6b', '#4ecdc4', '#45b7d1', 
+    '#96ceb4', '#ffeaa7', '#dda0dd', '#98d8c8', '#f7dc6f'
+  ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Colores */}
       <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-6">
-        <h3 className="text-xl font-bold text-[#f69f16] mb-6">🎨 Personalización de Colores</h3>
+        <h3 className="text-lg font-semibold text-[#f69f16] mb-4">🎨 Colores</h3>
         
-        {/* Vista previa */}
-        <div className="mb-6 p-4 bg-black/50 rounded-lg">
-          <h4 className="text-white font-semibold mb-3">Vista Previa</h4>
-          <div className="flex gap-4 items-center">
-            <button 
-              className="px-4 py-2 rounded-lg font-medium transition-colors"
-              style={{ 
-                backgroundColor: designConfig.primaryColor, 
-                color: '#000'
-              }}
-            >
-              Botón Principal
-            </button>
-            <button 
-              className="px-4 py-2 rounded-lg font-medium transition-colors border"
-              style={{ 
-                borderColor: designConfig.primaryColor,
-                color: designConfig.primaryColor,
-                backgroundColor: 'transparent'
-              }}
-            >
-              Botón Secundario
-            </button>
-            <div 
-              className="w-8 h-8 rounded-full"
-              style={{ backgroundColor: designConfig.secondaryColor }}
-            ></div>
-          </div>
-        </div>
-
-        {/* Selectores de color personalizados */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-white font-medium mb-2">Color Principal</label>
-            <div className="flex items-center gap-3">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Color Principal
+            </label>
+            <div className="flex gap-3 items-center">
               <input
                 type="color"
-                value={designConfig.primaryColor}
-                onChange={(e) => setDesignConfig(prev => ({ ...prev, primaryColor: e.target.value }))}
-                className="w-12 h-12 rounded-lg border border-gray-600 bg-transparent cursor-pointer"
+                value={design.primaryColor}
+                onChange={(e) => setDesign({ ...design, primaryColor: e.target.value })}
+                className="w-12 h-12 rounded border-2 border-gray-600"
               />
               <input
                 type="text"
-                value={designConfig.primaryColor}
-                onChange={(e) => setDesignConfig(prev => ({ ...prev, primaryColor: e.target.value }))}
-                className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white"
-                placeholder="#f69f16"
+                value={design.primaryColor}
+                onChange={(e) => setDesign({ ...design, primaryColor: e.target.value })}
+                className="flex-1 p-2 bg-black/50 border border-[#f69f16]/30 rounded text-white"
               />
             </div>
           </div>
-          
+
           <div>
-            <label className="block text-white font-medium mb-2">Color Secundario</label>
-            <div className="flex items-center gap-3">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Color Secundario
+            </label>
+            <div className="flex gap-3 items-center">
               <input
                 type="color"
-                value={designConfig.secondaryColor}
-                onChange={(e) => setDesignConfig(prev => ({ ...prev, secondaryColor: e.target.value }))}
-                className="w-12 h-12 rounded-lg border border-gray-600 bg-transparent cursor-pointer"
+                value={design.secondaryColor}
+                onChange={(e) => setDesign({ ...design, secondaryColor: e.target.value })}
+                className="w-12 h-12 rounded border-2 border-gray-600"
               />
               <input
                 type="text"
-                value={designConfig.secondaryColor}
-                onChange={(e) => setDesignConfig(prev => ({ ...prev, secondaryColor: e.target.value }))}
-                className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white"
-                placeholder="#e6950f"
+                value={design.secondaryColor}
+                onChange={(e) => setDesign({ ...design, secondaryColor: e.target.value })}
+                className="flex-1 p-2 bg-black/50 border border-[#f69f16]/30 rounded text-white"
               />
             </div>
           </div>
         </div>
 
-        {/* Presets de colores */}
-        <div>
-          <h4 className="text-white font-medium mb-3">Paletas Predefinidas</h4>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {colorPresets.map((preset, index) => (
+        <div className="mt-4">
+          <p className="text-sm text-gray-300 mb-2">Colores predefinidos:</p>
+          <div className="flex flex-wrap gap-2">
+            {presetColors.map((color) => (
               <button
-                key={index}
-                onClick={() => applyColorPreset(preset)}
-                className="p-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors border border-gray-600 hover:border-gray-500"
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <div 
-                    className="w-4 h-4 rounded-full"
-                    style={{ backgroundColor: preset.primary }}
-                  ></div>
-                  <div 
-                    className="w-4 h-4 rounded-full"
-                    style={{ backgroundColor: preset.secondary }}
-                  ></div>
-                </div>
-                <span className="text-xs text-gray-300">{preset.name}</span>
-              </button>
+                key={color}
+                onClick={() => setDesign({ ...design, primaryColor: color })}
+                className="w-8 h-8 rounded border-2 border-gray-600 hover:scale-110 transition-transform"
+                style={{ backgroundColor: color }}
+              />
             ))}
           </div>
         </div>
       </div>
 
-      {/* Layout de Fotos */}
+      {/* Layout y Estilos */}
       <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-6">
-        <h3 className="text-xl font-bold text-[#f69f16] mb-6">📸 Layout de Galería</h3>
+        <h3 className="text-lg font-semibold text-[#f69f16] mb-4">🎯 Estilos</h3>
         
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-white font-medium mb-3">Disposición de Fotos</label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <button
-                onClick={() => setDesignConfig(prev => ({ ...prev, photosLayout: 'grid' }))}
-                className={`p-4 rounded-lg border-2 transition-colors ${
-                  designConfig.photosLayout === 'grid'
-                    ? 'border-[#f69f16] bg-[#f69f16]/10'
-                    : 'border-gray-600 bg-gray-800 hover:border-gray-500'
-                }`}
-              >
-                <div className="grid grid-cols-3 gap-1 mb-3 mx-auto w-16">
-                  {[...Array(6)].map((_, i) => (
-                    <div key={i} className="w-4 h-4 bg-gray-600 rounded"></div>
-                  ))}
-                </div>
-                <div className="text-center">
-                  <h4 className="text-white font-medium">Grid Compacto</h4>
-                  <p className="text-xs text-gray-400">6 columnas, miniaturas</p>
-                </div>
-              </button>
-
-              <button
-                onClick={() => setDesignConfig(prev => ({ ...prev, photosLayout: 'centered' }))}
-                className={`p-4 rounded-lg border-2 transition-colors ${
-                  designConfig.photosLayout === 'centered'
-                    ? 'border-[#f69f16] bg-[#f69f16]/10'
-                    : 'border-gray-600 bg-gray-800 hover:border-gray-500'
-                }`}
-              >
-                <div className="flex justify-center gap-2 mb-3">
-                  {[...Array(3)].map((_, i) => (
-                    <div key={i} className="w-6 h-6 bg-gray-600 rounded"></div>
-                  ))}
-                </div>
-                <div className="text-center">
-                  <h4 className="text-white font-medium">Centrado</h4>
-                  <p className="text-xs text-gray-400">3 columnas, fotos grandes</p>
-                </div>
-              </button>
-            </div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Layout de Fotos
+            </label>
+            <select
+              value={design.photosLayout}
+              onChange={(e) => setDesign({ ...design, photosLayout: e.target.value as 'grid' | 'centered' })}
+              className="w-full p-3 bg-black/50 border border-[#f69f16]/30 rounded text-white"
+            >
+              <option value="grid">Grid Completo</option>
+              <option value="centered">Centrado</option>
+            </select>
           </div>
 
           <div>
-            <label className="block text-white font-medium mb-3">Estilo de Botones</label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                { key: 'rounded', name: 'Redondeados', class: 'rounded-lg' },
-                { key: 'square', name: 'Cuadrados', class: 'rounded-none' },
-                { key: 'pill', name: 'Píldora', class: 'rounded-full' }
-              ].map((style) => (
-                <button
-                  key={style.key}
-                  onClick={() => setDesignConfig(prev => ({ ...prev, buttonStyle: style.key as any }))}
-                  className={`p-4 rounded-lg border-2 transition-colors ${
-                    designConfig.buttonStyle === style.key
-                      ? 'border-[#f69f16] bg-[#f69f16]/10'
-                      : 'border-gray-600 bg-gray-800 hover:border-gray-500'
-                  }`}
-                >
-                  <div 
-                    className={`w-16 h-8 mx-auto mb-2 ${style.class}`}
-                    style={{ backgroundColor: designConfig.primaryColor }}
-                  ></div>
-                  <div className="text-center">
-                    <h4 className="text-white font-medium">{style.name}</h4>
-                  </div>
-                </button>
-              ))}
-            </div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Estilo de Botones
+            </label>
+            <select
+              value={design.buttonStyle}
+              onChange={(e) => setDesign({ ...design, buttonStyle: e.target.value as 'rounded' | 'square' | 'pill' })}
+              className="w-full p-3 bg-black/50 border border-[#f69f16]/30 rounded text-white"
+            >
+              <option value="rounded">Redondeados</option>
+              <option value="square">Cuadrados</option>
+              <option value="pill">Píldora</option>
+            </select>
           </div>
         </div>
       </div>
 
-      {/* Botón Guardar */}
+      {/* Vista Previa */}
+      <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-[#f69f16] mb-4">👀 Vista Previa</h3>
+        <div className="flex items-center gap-4">
+          <div 
+            className="w-16 h-16 rounded"
+            style={{ backgroundColor: design.primaryColor }}
+          ></div>
+          <div 
+            className="w-16 h-16 rounded"
+            style={{ backgroundColor: design.secondaryColor }}
+          ></div>
+          <button
+            className={`px-4 py-2 font-medium transition-colors ${
+              design.buttonStyle === 'pill' ? 'rounded-full' :
+              design.buttonStyle === 'square' ? 'rounded-none' : 'rounded-lg'
+            }`}
+            style={{ 
+              backgroundColor: design.primaryColor,
+              color: 'black'
+            }}
+          >
+            Botón de Ejemplo
+          </button>
+        </div>
+      </div>
+
       <button
         onClick={handleSave}
         className="w-full bg-[#f69f16] hover:bg-[#e6950f] text-black font-medium py-3 px-6 rounded-lg transition-colors"
       >
-        💾 Guardar Configuración de Diseño
+        🎨 Guardar Diseño
       </button>
     </div>
   );
 };
 
-// Sección Historial - MEJORADA
+// Sección Historial
 const HistorySection: React.FC<{ showNotification: (message: string, type?: 'success' | 'error' | 'info') => void }> = ({ showNotification }) => {
   const { getSaveHistory, clearSaveHistory } = useCMS();
-  const [filter, setFilter] = useState('all');
-  const history = getSaveHistory();
-
-  const filteredHistory = filter === 'all' 
-    ? history 
-    : history.filter(entry => entry.section.toLowerCase().includes(filter.toLowerCase()));
+  const [history, setHistory] = useState(getSaveHistory());
 
   const handleClearHistory = () => {
-    if (window.confirm('¿Estás seguro de que quieres limpiar todo el historial? Esta acción no se puede deshacer.')) {
+    if (confirm('¿Estás seguro de que quieres limpiar el historial?')) {
       clearSaveHistory();
-      showNotification('✅ Historial limpiado exitosamente', 'success');
+      setHistory([]);
+      showNotification('🗑️ Historial limpiado', 'success');
     }
-  };
-
-  const formatDate = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return {
-      date: date.toLocaleDateString('es-ES'),
-      time: date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-    };
-  };
-
-  const getSectionIcon = (section: string) => {
-    const icons: { [key: string]: string } = {
-      'información general': '👤',
-      'biografía': '📝',
-      'redes sociales': '🌐',
-      'sets & media': '🎵',
-      'galería': '📸',
-      'documentos': '📄',
-      'archivos': '📁',
-      'descargas': '⬇️',
-      'imagen hero': '🖼️'
-    };
-    return icons[section.toLowerCase()] || '📋';
   };
 
   return (
     <div className="space-y-6">
-      {/* Header con estadísticas */}
-      <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-2xl font-bold text-[#f69f16]">Registro de Guardados</h3>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-400">
-              Total: {history.length} registros
-            </span>
-            <button
-              onClick={handleClearHistory}
-              className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
-              disabled={history.length === 0}
-            >
-              🗑️ Limpiar Historial
-            </button>
-          </div>
-        </div>
-
-        {/* Filtros */}
-        <div className="flex flex-wrap gap-2">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold text-[#f69f16]">📋 Historial de Cambios</h3>
+        {history.length > 0 && (
           <button
-            onClick={() => setFilter('all')}
-            className={`px-3 py-1 rounded-full text-sm transition-colors ${
-              filter === 'all' 
-                ? 'bg-[#f69f16] text-black' 
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-            }`}
+            onClick={handleClearHistory}
+            className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
           >
-            Todos ({history.length})
+            🗑️ Limpiar Historial
           </button>
-          {['Información General', 'Biografía', 'Redes Sociales', 'Sets & Media', 'Galería', 'Documentos', 'Archivos'].map(section => {
-            const count = history.filter(entry => entry.section.toLowerCase().includes(section.toLowerCase())).length;
-            if (count === 0) return null;
-            
-            return (
-              <button
-                key={section}
-                onClick={() => setFilter(section)}
-                className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                  filter === section 
-                    ? 'bg-[#f69f16] text-black' 
-                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
-              >
-                {getSectionIcon(section)} {section} ({count})
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Lista de historial */}
-      <div className="space-y-4">
-        {filteredHistory.length === 0 ? (
-          <div className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-8 text-center">
-            <div className="text-4xl mb-4">📋</div>
-            <h3 className="text-lg font-semibold text-white mb-2">No hay registros</h3>
-            <p className="text-gray-400">
-              {filter === 'all' 
-                ? 'Aún no se han guardado cambios en el CMS'
-                : `No hay registros para la sección "${filter}"`
-              }
-            </p>
-          </div>
-        ) : (
-          filteredHistory.map((entry, index) => {
-            const { date, time } = formatDate(entry.timestamp);
-            return (
-              <div
-                key={entry.id}
-                className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-6 hover:border-[#f69f16]/40 transition-colors"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{getSectionIcon(entry.section)}</span>
-                    <div>
-                      <h4 className="font-semibold text-white text-lg">{entry.section}</h4>
-                      <div className="flex items-center gap-4 text-sm text-gray-400">
-                        <span>👤 {entry.user}</span>
-                        <span>📅 {date}</span>
-                        <span>🕒 {time}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <span className="bg-[#f69f16]/20 text-[#f69f16] px-2 py-1 rounded-full text-xs font-semibold">
-                    #{entry.id}
-                  </span>
-                </div>
-
-                <div className="bg-black/50 rounded-lg p-4">
-                  <h5 className="text-sm font-semibold text-[#f69f16] mb-2">
-                    Cambios realizados ({entry.changes.length}):
-                  </h5>
-                  <div className="space-y-1">
-                    {entry.changes.map((change, changeIndex) => (
-                      <div key={changeIndex} className="flex items-start gap-2">
-                        <span className="text-[#f69f16] text-xs mt-1">•</span>
-                        <span className="text-sm text-gray-300">{change}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            );
-          })
         )}
       </div>
 
-      {/* Información adicional */}
-      {history.length > 0 && (
-        <div className="bg-black/20 border border-[#f69f16]/10 rounded-lg p-4">
-          <p className="text-xs text-gray-500 text-center">
-            💾 Los datos se guardan automáticamente en el navegador y persisten entre sesiones.
-            <br />
-            📋 Se mantienen los últimos 50 registros de cambios.
-          </p>
+      {history.length === 0 ? (
+        <div className="text-center py-12 text-gray-400">
+          <div className="text-4xl mb-4">📋</div>
+          <p>No hay cambios guardados aún</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {history.reverse().map((entry, index) => (
+            <div key={index} className="bg-black/30 border border-[#f69f16]/20 rounded-lg p-4">
+              <div className="flex justify-between items-start mb-2">
+                <h4 className="font-semibold text-white">{entry.section}</h4>
+                <span className="text-xs text-gray-400">
+                  {new Date(entry.timestamp).toLocaleString()}
+                </span>
+              </div>
+              <div className="text-sm text-gray-300">
+                <p>Cambios guardados en {entry.section.toLowerCase()}</p>
+                {entry.timestamp && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    {new Date(entry.timestamp).toRelativeTimeString()}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

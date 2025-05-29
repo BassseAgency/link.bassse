@@ -109,12 +109,12 @@ export const ArtistInfoBlock: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-8 lg:mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 uppercase tracking-tight" style={{ color: primaryColor }}>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 uppercase tracking-tight text-center" style={{ color: primaryColor }}>
             Información del Artista
           </h2>
-          <div className="w-24 h-1 mx-auto" style={{ background: `linear-gradient(to right, ${primaryColor}, ${secondaryColor})` }}></div>
+          <div className="w-20 lg:w-24 h-1 mx-auto" style={{ background: `linear-gradient(to right, ${primaryColor}, ${secondaryColor})` }}></div>
         </motion.div>
 
         {/* CMS Edit Indicator */}
@@ -130,64 +130,64 @@ export const ArtistInfoBlock: React.FC = () => {
           </motion.div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-8 lg:mb-12">
           {/* Artist Details */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-black/50 backdrop-blur-sm rounded-2xl p-6"
+            className="bg-black/50 backdrop-blur-sm rounded-2xl p-4 lg:p-6"
             style={{ border: `1px solid ${primaryColor}20` }}
           >
-            <h3 className="text-xl font-bold mb-6" style={{ color: primaryColor }}>Detalles del Artista</h3>
+            <h3 className="text-lg lg:text-xl font-bold mb-4 lg:mb-6 text-center lg:text-left" style={{ color: primaryColor }}>Detalles del Artista</h3>
             
-            <div className="space-y-4">
+            <div className="space-y-3 lg:space-y-4">
               <div>
-                <h4 className="text-sm font-semibold text-white mb-2">Géneros</h4>
-                <div className="flex flex-wrap gap-2">
+                <h4 className="text-sm lg:text-base font-semibold text-white mb-2">Géneros</h4>
+                <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
                   {artistInfo.genres.map((genre, index) => (
-                    <span key={index} className="text-black px-2 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: primaryColor }}>
+                    <span key={index} className="text-black px-3 py-1 rounded-full text-xs lg:text-sm font-semibold" style={{ backgroundColor: primaryColor }}>
                       {genre}
                     </span>
                   ))}
                 </div>
               </div>
 
-              <div>
-                <h4 className="text-sm font-semibold text-white mb-2">Colectivo</h4>
-                <p className="text-gray-300 text-sm">{artistInfo.collective}</p>
+              <div className="text-center lg:text-left">
+                <h4 className="text-sm lg:text-base font-semibold text-white mb-2">Colectivo</h4>
+                <p className="text-gray-300 text-sm lg:text-base">{artistInfo.collective}</p>
               </div>
 
-              <div>
-                <h4 className="text-sm font-semibold text-white mb-2">Sellos</h4>
-                <p className="text-gray-300 text-sm">{artistInfo.labels.join(', ')}</p>
+              <div className="text-center lg:text-left">
+                <h4 className="text-sm lg:text-base font-semibold text-white mb-2">Sellos</h4>
+                <p className="text-gray-300 text-sm lg:text-base">{artistInfo.labels.join(', ')}</p>
               </div>
 
-              <div>
-                <h4 className="text-sm font-semibold text-white mb-2">Base</h4>
-                <p className="text-gray-300 text-sm">{artistInfo.baseCity}</p>
+              <div className="text-center lg:text-left">
+                <h4 className="text-sm lg:text-base font-semibold text-white mb-2">Base</h4>
+                <p className="text-gray-300 text-sm lg:text-base">{artistInfo.baseCity}</p>
               </div>
 
-              <div>
-                <h4 className="text-sm font-semibold text-white mb-2">Años Activo</h4>
-                <p className="text-gray-300 text-sm">{artistInfo.yearsActive}</p>
+              <div className="text-center lg:text-left">
+                <h4 className="text-sm lg:text-base font-semibold text-white mb-2">Años Activo</h4>
+                <p className="text-gray-300 text-sm lg:text-base">{artistInfo.yearsActive}</p>
               </div>
 
-              <div>
-                <h4 className="text-sm font-semibold text-white mb-2">Influencias</h4>
-                <p className="text-gray-300 text-sm">{artistInfo.influences}</p>
+              <div className="text-center lg:text-left">
+                <h4 className="text-sm lg:text-base font-semibold text-white mb-2">Influencias</h4>
+                <p className="text-gray-300 text-sm lg:text-base">{artistInfo.influences}</p>
               </div>
             </div>
 
             {session && (
               <motion.button
                 onClick={() => alert('Los detalles del artista se editan desde la sección "Información General" del CMS')}
-                className="mt-6 w-full bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 font-bold py-2 px-4 rounded-lg transition-all duration-300 flex items-center gap-2 justify-center text-sm"
+                className="mt-4 lg:mt-6 w-full bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 font-bold py-2 lg:py-3 px-4 rounded-lg transition-all duration-300 flex items-center gap-2 justify-center text-sm lg:text-base"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
                 Editar en CMS
@@ -201,16 +201,16 @@ export const ArtistInfoBlock: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-black/50 backdrop-blur-sm rounded-2xl p-6 flex flex-col justify-center"
+            className="bg-black/50 backdrop-blur-sm rounded-2xl p-4 lg:p-6 flex flex-col justify-center"
             style={{ border: `1px solid ${primaryColor}20` }}
           >
             <div className="text-center">
-              <svg className="w-16 h-16 mx-auto mb-4" style={{ color: primaryColor }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-12 h-12 lg:w-16 lg:h-16 mx-auto mb-3 lg:mb-4" style={{ color: primaryColor }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               
-              <h3 className="text-xl font-bold text-white mb-3">Rider Técnico</h3>
-              <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+              <h3 className="text-lg lg:text-xl font-bold text-white mb-2 lg:mb-3">Rider Técnico</h3>
+              <p className="text-gray-300 text-sm lg:text-base mb-4 lg:mb-6 leading-relaxed">
                 Especificaciones técnicas, requerimientos de sonido e iluminación para performances.
               </p>
 
@@ -221,12 +221,12 @@ export const ArtistInfoBlock: React.FC = () => {
                   link.download = 'technical-rider.pdf';
                   link.click();
                 }}
-                className={`w-full shadow-lg py-3 px-4 mb-3 ${getButtonClasses('primary')}`}
+                className={`w-full shadow-lg py-2 lg:py-3 px-3 lg:px-4 mb-2 lg:mb-3 text-sm lg:text-base ${getButtonClasses('primary')}`}
                 style={getButtonStyle('primary')}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Descargar Rider
@@ -235,7 +235,7 @@ export const ArtistInfoBlock: React.FC = () => {
               {session && (
                 <motion.button
                   onClick={() => alert('Editar rider técnico')}
-                  className="w-full bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 font-bold py-2 px-4 rounded-lg transition-all duration-300 flex items-center gap-2 justify-center text-sm"
+                  className="w-full bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 font-bold py-2 px-3 lg:px-4 rounded-lg transition-all duration-300 flex items-center gap-2 justify-center text-xs lg:text-sm"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -254,27 +254,27 @@ export const ArtistInfoBlock: React.FC = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-black/50 backdrop-blur-sm rounded-2xl p-6 flex flex-col justify-center"
+            className="bg-black/50 backdrop-blur-sm rounded-2xl p-4 lg:p-6 flex flex-col justify-center"
             style={{ border: `1px solid ${primaryColor}20` }}
           >
             <div className="text-center">
-              <svg className="w-16 h-16 mx-auto mb-4" style={{ color: primaryColor }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-12 h-12 lg:w-16 lg:h-16 mx-auto mb-3 lg:mb-4" style={{ color: primaryColor }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
               
-              <h3 className="text-xl font-bold text-white mb-3">Press Kit Completo</h3>
-              <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+              <h3 className="text-lg lg:text-xl font-bold text-white mb-2 lg:mb-3">Press Kit Completo</h3>
+              <p className="text-gray-300 text-sm lg:text-base mb-4 lg:mb-6 leading-relaxed">
                 Descarga el press kit completo con biografía, fotos, rider técnico y sets.
               </p>
 
               <motion.button
                 onClick={handleDownloadPressKit}
-                className={`w-full shadow-lg py-3 px-4 ${getButtonClasses('primary')}`}
+                className={`w-full shadow-lg py-2 lg:py-3 px-3 lg:px-4 text-sm lg:text-base ${getButtonClasses('primary')}`}
                 style={getButtonStyle('primary')}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Descargar Press Kit
@@ -290,19 +290,19 @@ export const ArtistInfoBlock: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
             viewport={{ once: true }}
-            className="bg-black/50 backdrop-blur-sm rounded-2xl p-8"
+            className="bg-black/50 backdrop-blur-sm rounded-2xl p-4 lg:p-8"
             style={{ border: `1px solid ${primaryColor}20` }}
           >
-            <h3 className="text-2xl font-bold mb-6 text-center" style={{ color: primaryColor }}>Redes Sociales</h3>
+            <h3 className="text-xl lg:text-2xl font-bold mb-4 lg:mb-6 text-center" style={{ color: primaryColor }}>Redes Sociales</h3>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-4">
               {socialPlatforms.map((platform, index) => (
                 <motion.a
                   key={platform.key}
                   href={platform.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative bg-gray-800/50 hover:bg-gray-700/50 border border-gray-600/50 rounded-xl p-4 transition-all duration-300 flex flex-col items-center gap-3"
+                  className="group relative bg-gray-800/50 hover:bg-gray-700/50 border border-gray-600/50 rounded-xl p-3 lg:p-4 transition-all duration-300 flex flex-col items-center gap-2 lg:gap-3"
                   style={{ '--hover-border-color': `${primaryColor}50` } as React.CSSProperties}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = `${primaryColor}80`;
@@ -318,9 +318,9 @@ export const ArtistInfoBlock: React.FC = () => {
                   whileTap={{ scale: 0.95 }}
                 >
                   <div className="group-hover:scale-110 transition-transform duration-300" style={{ color: platform.color }}>
-                    <platform.icon size={32} />
+                    <platform.icon size={24} className="lg:w-8 lg:h-8" />
                   </div>
-                  <span className="text-white text-sm font-medium transition-colors duration-300" 
+                  <span className="text-white text-xs lg:text-sm font-medium transition-colors duration-300 text-center" 
                         onMouseEnter={(e) => {
                           e.currentTarget.style.color = primaryColor;
                         }}
@@ -342,15 +342,15 @@ export const ArtistInfoBlock: React.FC = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.2, duration: 0.5 }}
-                className="mt-6 text-center"
+                className="mt-4 lg:mt-6 text-center"
               >
                 <motion.button
                   onClick={() => alert('Las redes sociales se editan desde la sección "Redes Sociales" del CMS')}
-                  className="bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 font-bold py-2 px-6 rounded-lg transition-all duration-300 flex items-center gap-2 mx-auto text-sm"
+                  className="bg-gray-800 hover:bg-gray-700 text-white border border-gray-600 font-bold py-2 lg:py-3 px-4 lg:px-6 rounded-lg transition-all duration-300 flex items-center gap-2 mx-auto text-sm lg:text-base"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
                   Editar Redes Sociales

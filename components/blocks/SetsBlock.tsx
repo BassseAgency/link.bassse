@@ -44,7 +44,7 @@ export const SetsBlock: React.FC = () => {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 uppercase tracking-tight" style={{ color: primaryColor }}>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 uppercase tracking-tight text-center" style={{ color: primaryColor }}>
             Sets & Releases
           </h2>
           <div className="w-24 h-1 mx-auto" style={{ background: `linear-gradient(to right, ${primaryColor}, ${secondaryColor})` }}></div>

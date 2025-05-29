@@ -161,6 +161,7 @@ export interface ArtistProfile {
   // Media
   sets: ArtistSet[];
   gallery: ArtistImage[];
+  videos: ArtistVideo[];
   
   // Documentos
   documents: {
@@ -213,6 +214,20 @@ export interface ArtistImage {
   thumbnailUrl?: string;
   alt: string;
   caption?: string;
+  order: number;
+  isVisible: boolean;
+  uploadedAt: string;
+}
+
+export interface ArtistVideo {
+  id: string;
+  title: string;
+  url: string;
+  thumbnail: string;
+  type: 'upload' | 'youtube' | 'drive' | 'vimeo';
+  embedCode?: string;
+  duration?: string;
+  description?: string;
   order: number;
   isVisible: boolean;
   uploadedAt: string;
