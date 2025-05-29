@@ -479,6 +479,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
                 </>
               )}
             </button>
+
+            {/* NO MOSTRAR CREDENCIALES DE PRUEBA - ELIMINADAS */}
           </form>
         </motion.div>
       </motion.div>
