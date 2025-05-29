@@ -88,10 +88,11 @@ export const BasseDashboard: React.FC<BasseDashboardProps> = ({ onClose }) => {
 
   const handleSendPasswordReset = async (email: string, artistName: string) => {
     try {
+      // Simular proceso sin envío real de email
       await new Promise(resolve => setTimeout(resolve, 500));
-      alert(`Email de restablecimiento enviado a ${email} para ${artistName}`);
+      alert(`Contraseña restablecida localmente para ${artistName}. No se envió email.`);
     } catch (error) {
-      console.error('Error enviando reset:', error);
+      console.error('Error en reset local:', error);
     }
   };
 
@@ -1587,7 +1588,6 @@ const SettingsSection: React.FC = () => {
       slackIntegration: false
     },
     security: {
-      twoFactorAuth: true,
       sessionTimeout: 24, // horas
       passwordPolicy: 'strong',
       ipWhitelist: '',
@@ -1901,22 +1901,6 @@ const SettingsSection: React.FC = () => {
               <h4 className="text-lg font-semibold text-white">Configuración de Seguridad</h4>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex items-center justify-between p-4 bg-black/50 rounded-lg">
-                  <div>
-                    <p className="text-white font-medium">Autenticación de Dos Factores</p>
-                    <p className="text-sm text-gray-400">Requerir 2FA para todos los administradores</p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={settings.security.twoFactorAuth}
-                      onChange={(e) => handleSettingChange('security', 'twoFactorAuth', e.target.checked)}
-                      className="sr-only peer"
-                    />
-                    <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#f69f16]"></div>
-                  </label>
-                </div>
-                
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Tiempo de Sesión (horas)
@@ -1940,7 +1924,7 @@ const SettingsSection: React.FC = () => {
                   >
                     <option value="basic">Básica (8 caracteres)</option>
                     <option value="strong">Fuerte (12 caracteres + símbolos)</option>
-                    <option value="enterprise">Empresarial (16 caracteres + 2FA)</option>
+                    <option value="enterprise">Empresarial (16 caracteres + validación)</option>
                   </select>
                 </div>
                 
