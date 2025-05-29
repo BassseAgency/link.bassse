@@ -116,14 +116,6 @@ export const CMSLoginModal: React.FC<CMSLoginModalProps> = ({ onClose, onLoginSu
           </motion.button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-400 mb-2">Credenciales disponibles:</p>
-          <div className="text-xs text-gray-300 space-y-1">
-            <p><strong>Admin BASSSE:</strong> AdminBasse / BassseAdmin2024!</p>
-            <p><strong>K-SAIS:</strong> Adminksais / Ksais123</p>
-          </div>
-        </div>
-        
         <p className="mt-4 text-xs text-gray-500 text-center">
           Panel de administración para gestión de contenido
         </p>

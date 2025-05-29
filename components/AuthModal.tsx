@@ -444,9 +444,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
                     className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#f69f16] focus:ring-1 focus:ring-[#f69f16] transition-colors text-center text-2xl tracking-widest"
                     placeholder="123456"
                   />
-                  <p className="text-xs text-gray-500 mt-1 text-center">
-                    Código de prueba: 123456
-                  </p>
                 </div>
 
                 <div className="text-center">
@@ -483,18 +480,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onAuthSuccess }) 
               )}
             </button>
           </form>
-
-          {/* Demo Credentials */}
-          {activeMode === 'login' && (
-            <div className="mt-6 p-4 bg-gray-900/50 rounded-lg">
-              <h4 className="text-sm font-medium text-gray-300 mb-2">Credenciales de Prueba:</h4>
-              <div className="text-xs text-gray-400 space-y-1">
-                <p><strong>Admin Global:</strong> link-bassse / Link2025.</p>
-                <p><strong>Admin Artista:</strong> Adminksais / Ksais123</p>
-                <p><strong>Usuario:</strong> Pepe / Pepe123</p>
-              </div>
-            </div>
-          )}
         </motion.div>
       </motion.div>
     </AnimatePresence>
