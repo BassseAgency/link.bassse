@@ -8,6 +8,8 @@ import { BasseDashboard } from './components/BasseDashboard';
 import { CMSProvider, useCMS } from './src/context/CMSContext';
 import { useDesign } from './src/hooks/useDesign';
 import { Logo } from './src/components/Logo';
+import { CookieBanner } from './src/components/CookieBanner';
+import { AppDownload } from './src/components/AppDownload';
 import { ArtistProfile } from './types';
 import { InstagramIcon, FacebookIcon, TwitterIcon, YouTubeIcon, SoundCloudIcon, SpotifyIcon, TikTokIcon, LinkedInIcon } from './src/components/SocialIcons';
 
@@ -443,6 +445,9 @@ const AppContent: React.FC<AppContentProps> = ({ artistData }) => {
           <ArtistInfoBlock />
         </div>
 
+        {/* App Download Section */}
+        <AppDownload />
+
         {/* Footer */}
         <motion.footer 
           className="bg-black py-12 mt-auto relative z-10"
@@ -754,6 +759,9 @@ const AppContent: React.FC<AppContentProps> = ({ artistData }) => {
       )}
       
       {showCMSDashboard && renderDashboard()}
+
+      {/* Cookie Banner */}
+      <CookieBanner />
     </>
   );
 };

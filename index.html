@@ -14,12 +14,12 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://link.bassse.com/" />
-    <meta property="og:title" content="LINK.BASSSE - Plataforma Multi-Artista | Electronic Press Kits" />
-    <meta property="og:description" content="LINK.BASSSE - Plataforma completa de press kits electrónicos para artistas. Sistema multi-usuario con métricas avanzadas y dashboard administrativo." />
-    <meta property="og:image" content="/images/link-bassse-og.jpg" />
+    <meta property="og:title" content="LINK.BASSSE - Electronic Press Kit Platform" />
+    <meta property="og:description" content="Plataforma profesional de press kits electrónicos para artistas. Crea tu EPK completo con biografía, fotos, videos, sets y documentación técnica." />
+    <meta property="og:image" content="/images/link-bassse-main.webp" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="LINK.BASSSE - Plataforma Multi-Artista" />
+    <meta property="og:image:alt" content="LINK.BASSSE - Electronic Press Kit Platform" />
     <meta property="og:site_name" content="LINK.BASSSE" />
     <meta property="og:locale" content="es_ES" />
     <meta property="og:locale:alternate" content="en_US" />
@@ -29,10 +29,10 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://link.bassse.com/" />
-    <meta name="twitter:title" content="LINK.BASSSE - Plataforma Multi-Artista | Electronic Press Kits" />
-    <meta name="twitter:description" content="LINK.BASSSE - Plataforma completa de press kits electrónicos para artistas." />
-    <meta name="twitter:image" content="/images/link-bassse-og.jpg" />
-    <meta name="twitter:image:alt" content="LINK.BASSSE - Plataforma Multi-Artista" />
+    <meta name="twitter:title" content="LINK.BASSSE - Electronic Press Kit Platform" />
+    <meta name="twitter:description" content="Plataforma profesional de press kits electrónicos para artistas." />
+    <meta name="twitter:image" content="/images/link-bassse-main.webp" />
+    <meta name="twitter:image:alt" content="LINK.BASSSE - Electronic Press Kit Platform" />
     
     <!-- Instagram specific (uses Open Graph) -->
     <meta property="instagram:card" content="summary_large_image" />
@@ -43,6 +43,18 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="LINK.BASSSE" />
     <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- PWA Capabilities -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="LINK.BASSSE" />
+    <meta name="application-name" content="LINK.BASSSE" />
+    <meta name="msapplication-TileColor" content="#f69f16" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
     
     <!-- Favicon and Icons -->
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
@@ -159,6 +171,49 @@
     
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
+    
+    <!-- PWA Install Script -->
+    <script>
+      // PWA Install Prompt
+      let deferredPrompt;
+      
+      window.addEventListener('beforeinstallprompt', (e) => {
+        console.log('🔧 PWA install prompt disponible');
+        e.preventDefault();
+        deferredPrompt = e;
+        window.deferredPrompt = e;
+      });
+
+      window.addEventListener('appinstalled', () => {
+        console.log('✅ PWA instalada exitosamente');
+        deferredPrompt = null;
+        window.deferredPrompt = null;
+      });
+
+      // Service Worker Registration
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('🔧 SW registrado: ', registration.scope);
+            })
+            .catch((registrationError) => {
+              console.log('❌ SW registration falló: ', registrationError);
+            });
+        });
+      }
+
+      // Share API for PWA
+      if (navigator.share) {
+        window.nativeShare = async (shareData) => {
+          try {
+            await navigator.share(shareData);
+          } catch (err) {
+            console.log('Error sharing:', err);
+          }
+        };
+      }
+    </script>
     
     <!-- Hide loading screen when app loads -->
     <script>

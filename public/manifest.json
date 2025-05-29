@@ -1,25 +1,84 @@
 {
-  "name": "DJ Promo App - Electronic Press Kit",
-  "short_name": "DJ Promo",
-  "description": "Professional DJ Electronic Press Kit with multilingual support",
-  "theme_color": "#f69f16",
-  "background_color": "#000000",
-  "display": "standalone",
-  "orientation": "portrait",
-  "scope": "/",
+  "name": "LINK.BASSSE - Electronic Press Kit",
+  "short_name": "LINK.BASSSE",
+  "description": "Plataforma profesional de press kits electrónicos para artistas",
   "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#f69f16",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": ["music", "entertainment", "business", "productivity"],
   "icons": [
     {
-      "src": "pwa-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
+      "src": "/images/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/link-bassse-main.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
       "purpose": "any maskable"
     },
     {
-      "src": "pwa-512x512.png",
-      "sizes": "512x512",
+      "src": "/images/apple-touch-icon.png",
+      "sizes": "180x180",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "/images/link-bassse-main.webp",
+      "sizes": "1280x720",
+      "type": "image/webp",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mi Perfil",
+      "short_name": "Perfil",
+      "description": "Acceder a mi perfil de artista",
+      "url": "/?shortcut=profile",
+      "icons": [{ "src": "/images/favicon.ico", "sizes": "32x32" }]
+    },
+    {
+      "name": "CMS Dashboard",
+      "short_name": "CMS",
+      "description": "Panel de control para gestión de contenido",
+      "url": "/?shortcut=cms",
+      "icons": [{ "src": "/images/favicon.ico", "sizes": "32x32" }]
+    }
+  ],
+  "share_target": {
+    "action": "/share-target/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "files",
+          "accept": ["image/*", "audio/*", ".pdf"]
+        }
+      ]
+    }
+  },
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://link.bassse.com/manifest.json"
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
 } 
