@@ -1,9 +1,63 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useDesign } from '../hooks/useDesign';
 
 export const AppDownload: React.FC = () => {
   const { primaryColor } = useDesign();
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
+
+  useEffect(() => {
+    // Detectar si la app ya está instalada
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsInstalled(true);
+    }
+
+    // Escuchar el evento beforeinstallprompt
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    // Escuchar cuando la app se instala
+    const handleAppInstalled = () => {
+      setIsInstalled(true);
+      setIsInstallable(false);
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallPWA = async () => {
+    if (!deferredPrompt) {
+      // Si no hay prompt disponible, mostrar instrucciones
+      alert('📱 Para instalar la app:\n\n1. Abre el menú de tu navegador\n2. Busca "Agregar a pantalla de inicio" o "Instalar app"\n3. Confirma la instalación\n\n¡Tendrás acceso directo desde tu dispositivo!');
+      return;
+    }
+
+    const result = await deferredPrompt.prompt();
+    console.log('🔧 PWA install result:', result);
+    
+    if (result.outcome === 'accepted') {
+      setDeferredPrompt(null);
+      setIsInstallable(false);
+    }
+  };
+
+  const getInstallButtonText = () => {
+    if (isInstalled) return '✅ App Instalada';
+    if (isInstallable) return '📱 Instalar App';
+    return '📱 Instalar App Web';
+  };
 
   return (
     <motion.section 
@@ -28,6 +82,17 @@ export const AppDownload: React.FC = () => {
             Lleva tu press kit siempre contigo. Accede a toda tu información, actualiza contenido y gestiona tu perfil desde cualquier lugar.
           </p>
         </motion.div>
+
+        {/* Install Status Message */}
+        {isInstalled && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-8 p-4 bg-green-100 border border-green-300 rounded-lg text-green-800"
+          >
+            ✅ <strong>¡App ya instalada!</strong> Puedes acceder desde la pantalla de inicio de tu dispositivo.
+          </motion.div>
+        )}
 
         {/* App Preview */}
         <motion.div
@@ -90,7 +155,7 @@ export const AppDownload: React.FC = () => {
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute -top-4 -right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg"
               >
-                ¡Disponible!
+                {isInstalled ? '✅ Instalada' : '📱 Disponible'}
               </motion.div>
             </div>
           </div>
@@ -108,24 +173,24 @@ export const AppDownload: React.FC = () => {
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">📱</span>
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Acceso Rápido</h3>
-            <p className="text-gray-600 text-sm">Tu press kit siempre a mano, sin importar dónde estés.</p>
+            <h3 className="font-semibold text-gray-900 mb-2">Acceso Offline</h3>
+            <p className="text-gray-600 text-sm">Funciona sin conexión a internet. Tu press kit siempre disponible.</p>
           </div>
           
           <div className="text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">⚡</span>
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Actualizaciones Instantáneas</h3>
-            <p className="text-gray-600 text-sm">Modifica tu contenido en tiempo real desde la app.</p>
+            <h3 className="font-semibold text-gray-900 mb-2">Carga Instantánea</h3>
+            <p className="text-gray-600 text-sm">Abre la app al instante desde la pantalla de inicio.</p>
           </div>
           
           <div className="text-center">
             <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">📊</span>
+              <span className="text-2xl">🔔</span>
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Estadísticas en Vivo</h3>
-            <p className="text-gray-600 text-sm">Monitorea las visualizaciones y engagement al instante.</p>
+            <h3 className="font-semibold text-gray-900 mb-2">Notificaciones</h3>
+            <p className="text-gray-600 text-sm">Recibe actualizaciones importantes directamente en tu dispositivo.</p>
           </div>
         </motion.div>
 
@@ -137,12 +202,36 @@ export const AppDownload: React.FC = () => {
           transition={{ delay: 0.4 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          {/* App Store Button */}
+          {/* PWA Install Button - Prioritario */}
+          <motion.button
+            whileHover={{ scale: isInstalled ? 1 : 1.05 }}
+            whileTap={{ scale: isInstalled ? 1 : 0.95 }}
+            onClick={handleInstallPWA}
+            disabled={isInstalled}
+            style={{ 
+              backgroundColor: isInstalled ? '#10B981' : primaryColor,
+              opacity: isInstalled ? 0.8 : 1 
+            }}
+            className="inline-flex items-center text-white px-8 py-4 rounded-lg hover:opacity-90 transition-all shadow-lg font-medium text-lg"
+          >
+            <div className="mr-3">
+              <span className="text-2xl">{isInstalled ? '✅' : '📱'}</span>
+            </div>
+            <div className="text-left">
+              <div className="text-xs">
+                {isInstalled ? 'App Instalada' : 'Instalar ahora'}
+              </div>
+              <div className="font-semibold">{getInstallButtonText()}</div>
+            </div>
+          </motion.button>
+
+          {/* App Store Button - Futuro */}
           <motion.a
             href="#app-store"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors shadow-lg"
+            className="inline-flex items-center bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors shadow-lg opacity-50"
+            title="Próximamente disponible"
           >
             <div className="mr-3">
               <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
@@ -150,17 +239,18 @@ export const AppDownload: React.FC = () => {
               </svg>
             </div>
             <div className="text-left">
-              <div className="text-xs">Descargar en</div>
+              <div className="text-xs">Próximamente en</div>
               <div className="font-semibold">App Store</div>
             </div>
           </motion.a>
 
-          {/* Google Play Button */}
+          {/* Google Play Button - Futuro */}
           <motion.a
             href="#google-play"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors shadow-lg"
+            className="inline-flex items-center bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors shadow-lg opacity-50"
+            title="Próximamente disponible"
           >
             <div className="mr-3">
               <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
@@ -168,36 +258,26 @@ export const AppDownload: React.FC = () => {
               </svg>
             </div>
             <div className="text-left">
-              <div className="text-xs">Consíguela en</div>
+              <div className="text-xs">Próximamente en</div>
               <div className="font-semibold">Google Play</div>
             </div>
           </motion.a>
+        </motion.div>
 
-          {/* PWA Button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js');
-              }
-              // Trigger PWA install prompt if available
-              const deferredPrompt = (window as any).deferredPrompt;
-              if (deferredPrompt) {
-                deferredPrompt.prompt();
-              }
-            }}
-            style={{ backgroundColor: primaryColor }}
-            className="inline-flex items-center text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity shadow-lg"
-          >
-            <div className="mr-3">
-              <span className="text-2xl">🌐</span>
-            </div>
-            <div className="text-left">
-              <div className="text-xs">Instalar</div>
-              <div className="font-semibold">Web App</div>
-            </div>
-          </motion.button>
+        {/* Install Instructions */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5 }}
+          className="mt-8 p-4 bg-blue-50 rounded-lg"
+        >
+          <h4 className="font-semibold text-blue-900 mb-2">💡 ¿Cómo instalar la app?</h4>
+          <div className="text-sm text-blue-700 space-y-1">
+            <p><strong>Chrome/Edge:</strong> Icono "Instalar" en la barra de direcciones</p>
+            <p><strong>Safari iOS:</strong> Compartir → "Agregar a pantalla de inicio"</p>
+            <p><strong>Firefox:</strong> Menú → "Instalar aplicación"</p>
+          </div>
         </motion.div>
 
         {/* Coming Soon Note */}
@@ -205,10 +285,10 @@ export const AppDownload: React.FC = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.6 }}
           className="text-sm text-gray-500 mt-6"
         >
-          🚀 Proximamente disponible en todas las plataformas
+          🚀 Apps nativas para iOS y Android próximamente disponibles
         </motion.p>
       </div>
     </motion.section>

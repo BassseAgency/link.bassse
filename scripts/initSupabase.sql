@@ -227,6 +227,56 @@ FROM artists a
 WHERE a.slug = 'k-sais'
 ON CONFLICT DO NOTHING;
 
+-- Insertar usuarios de prueba
+INSERT INTO auth.users (
+  id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  is_super_admin,
+  role
+) VALUES 
+(
+  'b8b8b8b8-b8b8-b8b8-b8b8-b8b8b8b8b8b8',
+  'admin@link-bassse.com',
+  crypt('***REMOVED***', gen_salt('bf')),
+  NOW(),
+  NOW(),
+  NOW(),
+  '{"provider": "email", "providers": ["email"]}',
+  '{"username": "link-bassse", "display_name": "LINK.BASSSE Admin"}',
+  true,
+  'authenticated'
+),
+(
+  'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a1a1',
+  'info@bassse.com',
+  crypt('***REMOVED***', gen_salt('bf')),
+  NOW(),
+  NOW(),
+  NOW(),
+  '{"provider": "email", "providers": ["email"]}',
+  '{"username": "AdminBasse", "display_name": "Admin BASSSE"}',
+  false,
+  'authenticated'
+),
+(
+  'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2',
+  'contrataciones.ksais@gmail.com',
+  crypt('***REMOVED***', gen_salt('bf')),
+  NOW(),
+  NOW(),
+  NOW(),
+  '{"provider": "email", "providers": ["email"]}',
+  '{"username": "Adminksais", "display_name": "Admin K-SAIS"}',
+  false,
+  'authenticated'
+);
+
 -- ¡Script completado!
 -- Recuerda crear los usuarios manualmente en Authentication > Users
 -- y luego ejecutar: SELECT create_ksais_profile(); 

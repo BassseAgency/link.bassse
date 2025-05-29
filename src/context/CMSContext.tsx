@@ -144,96 +144,11 @@ export const CMSProvider: React.FC<CMSProviderProps> = ({ children }) => {
     setIsLoading(true);
     
     try {
-      // Primero intentar credenciales hardcodeadas (modo desarrollo)
-      if (username === 'link-bassse' && password === 'Link2025.') {
-        console.log('🔧 Usando login de desarrollo para link-bassse');
-        const mockSession: CMSSession = {
-          user: {
-            uid: 'dev-admin-bassse',
-            email: 'admin@link-bassse.com',
-            displayName: 'link-bassse',
-            role: 'bassse_admin',
-            createdAt: new Date().toISOString(),
-            isActive: true
-          },
-          token: 'dev-token-admin-bassse',
-          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-        };
-        
-        setSession(mockSession);
-        localStorage.setItem('cms-session', JSON.stringify(mockSession));
-        await loadArtistData();
-        return true;
-      }
-      
-      if (username === 'AdminBasse' && password === 'BassseAdmin2024!') {
-        console.log('🔧 Usando login de desarrollo para AdminBasse');
-        const mockSession: CMSSession = {
-          user: {
-            uid: 'dev-admin-bassse-old',
-            email: 'info@bassse.com',
-            displayName: 'AdminBasse',
-            role: 'bassse_admin',
-            createdAt: new Date().toISOString(),
-            isActive: true
-          },
-          token: 'dev-token-admin-bassse-old',
-          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-        };
-        
-        setSession(mockSession);
-        localStorage.setItem('cms-session', JSON.stringify(mockSession));
-        await loadArtistData();
-        return true;
-      }
-      
-      if (username === 'Adminksais' && password === 'Ksais123') {
-        console.log('🔧 Usando login de desarrollo para Adminksais');
-        const mockSession: CMSSession = {
-          user: {
-            uid: 'dev-admin-ksais',
-            email: 'contrataciones.ksais@gmail.com',
-            displayName: 'Adminksais',
-            role: 'admin',
-            createdAt: new Date().toISOString(),
-            isActive: true
-          },
-          token: 'dev-token-admin-ksais',
-          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-        };
-        
-        setSession(mockSession);
-        localStorage.setItem('cms-session', JSON.stringify(mockSession));
-        await loadArtistData();
-        return true;
-      }
-      
-      // Usuario normal: Pepe
-      if (username === 'Pepe' && password === 'Pepe123') {
-        console.log('🔧 Usando login de desarrollo para Pepe (usuario normal)');
-        const mockSession: CMSSession = {
-          user: {
-            uid: 'dev-user-pepe',
-            email: 'pepe@ejemplo.com',
-            displayName: 'Pepe',
-            role: 'artist',
-            createdAt: new Date().toISOString(),
-            isActive: true
-          },
-          token: 'dev-token-user-pepe',
-          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-        };
-        
-        setSession(mockSession);
-        localStorage.setItem('cms-session', JSON.stringify(mockSession));
-        await loadArtistData();
-        return true;
-      }
-
-      // Intentar Supabase solo si las credenciales no son las de desarrollo
+      // Intentar Supabase primero
       try {
         let result = null;
         
+        // Mapear usernames específicos a emails
         if (username === 'link-bassse') {
           result = await SupabaseService.login('admin@link-bassse.com', password);
         } else if (username === 'AdminBasse') {
@@ -258,8 +173,7 @@ export const CMSProvider: React.FC<CMSProviderProps> = ({ children }) => {
           return true;
         }
       } catch (supabaseError) {
-        console.log('⚠️ Supabase no disponible, usando modo desarrollo');
-        // Si Supabase falla, continuar con el flujo normal de error
+        console.log('⚠️ Supabase no disponible, usuario no encontrado');
       }
       
       return false;
