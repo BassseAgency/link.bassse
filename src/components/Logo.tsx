@@ -106,7 +106,7 @@ export const Logo: React.FC<LogoProps> = ({ size = 'medium', className = '', use
           fontFamily="Arial, sans-serif" 
           fontSize={currentSize.fontSize} 
           fontWeight="bold" 
-          fill={primaryColor}
+          fill="white"
         >
           LINK
         </text>
@@ -116,7 +116,7 @@ export const Logo: React.FC<LogoProps> = ({ size = 'medium', className = '', use
           fontFamily="Arial, sans-serif" 
           fontSize={currentSize.textSize} 
           fontWeight="normal" 
-          fill="#888"
+          fill="white"
         >
           BASSSE
         </text>

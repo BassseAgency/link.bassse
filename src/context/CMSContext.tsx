@@ -384,6 +384,7 @@ export const CMSProvider: React.FC<CMSProviderProps> = ({ children }) => {
           uploadedAt: new Date().toISOString()
         }
       ],
+      videos: [],
       documents: {
         technicalRider: {
           id: 'rider-1',
@@ -420,9 +421,6 @@ export const CMSProvider: React.FC<CMSProviderProps> = ({ children }) => {
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
       if (artistData && session) {
         const updatedData = {
           ...artistData,
@@ -433,10 +431,25 @@ export const CMSProvider: React.FC<CMSProviderProps> = ({ children }) => {
         // Detectar cambios
         const changes = detectChanges(artistData, data);
         
-        // Actualizar estado
+        // Actualizar estado inmediatamente
         setArtistData(updatedData);
         
-        // Guardar permanentemente
+        // Intentar guardar en servicios externos (Supabase/Firebase)
+        let externalSaveSuccess = false;
+        try {
+          if (editingArtist) {
+            // Modo administrador - guardar como el artista editado
+            externalSaveSuccess = await SupabaseService.updateArtistData(editingArtist, data);
+          } else if (artistData.slug) {
+            // Modo normal - guardar datos propios
+            externalSaveSuccess = await SupabaseService.updateArtistData(artistData.slug, data);
+          }
+        } catch (externalError) {
+          console.warn('⚠️ Error guardando en servicio externo, usando localStorage:', externalError);
+          externalSaveSuccess = false;
+        }
+        
+        // Siempre guardar en localStorage como respaldo
         saveDataPermanently(updatedData);
         
         // Guardar en historial
@@ -444,13 +457,16 @@ export const CMSProvider: React.FC<CMSProviderProps> = ({ children }) => {
           saveToHistory(section, changes, session.user.displayName ?? 'Usuario');
         }
         
-        console.log(`✅ Datos actualizados en sección: ${section}`);
-        console.log(`📝 Cambios detectados:`, changes);
+        const saveType = externalSaveSuccess ? 'servicio externo y localStorage' : 'localStorage';
+        console.log(`✅ Datos actualizados en sección: ${section} (${saveType})`);
+        console.log(`📝 Cambios guardados:`, changes);
+        
+        return true;
       }
       
-      return true;
+      return false;
     } catch (error) {
-      console.error('Update error:', error);
+      console.error('❌ Error actualizando datos:', error);
       return false;
     } finally {
       setIsLoading(false);
@@ -613,6 +629,7 @@ export const CMSProvider: React.FC<CMSProviderProps> = ({ children }) => {
        socialMedia: baseData.socialMedia || {},
        sets: baseData.sets || [],
        gallery: baseData.gallery || [],
+       videos: [],
        documents: baseData.documents || {
          technicalRider: {
            id: '',

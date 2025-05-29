@@ -3,10 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCMS } from '../src/context/CMSContext';
 import { ArtistVideo } from '../types';
 
-interface CMSDashboardProps {
-  onClose: () => void;
-}
-
 interface ToastNotification {
   id: string;
   message: string;
@@ -14,6 +10,10 @@ interface ToastNotification {
 }
 
 type CMSSection = 'general' | 'biography' | 'social' | 'sets' | 'gallery' | 'videos' | 'documents' | 'design' | 'history';
+
+interface CMSDashboardProps {
+  onClose: () => void;
+}
 
 // Componente Toast optimizado
 const Toast: React.FC<{ notification: ToastNotification; onClose: (id: string) => void }> = ({ notification, onClose }) => {
@@ -1398,8 +1398,8 @@ const DesignSection: React.FC<{ showNotification: (message: string, type?: 'succ
   const [design, setDesign] = useState(artistData?.design || {
     primaryColor: '#f69f16',
     secondaryColor: '#e6950f',
-    photosLayout: 'grid',
-    buttonStyle: 'rounded'
+    photosLayout: 'grid' as 'grid' | 'centered',
+    buttonStyle: 'rounded' as 'rounded' | 'square' | 'pill'
   });
 
   const handleSave = async () => {
@@ -1598,7 +1598,7 @@ const HistorySection: React.FC<{ showNotification: (message: string, type?: 'suc
                 <p>Cambios guardados en {entry.section.toLowerCase()}</p>
                 {entry.timestamp && (
                   <p className="text-xs text-gray-500 mt-1">
-                    {new Date(entry.timestamp).toRelativeTimeString()}
+                    {new Date(entry.timestamp).toLocaleString()}
                   </p>
                 )}
               </div>
